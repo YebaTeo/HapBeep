@@ -16,55 +16,41 @@ struct ContentView: View {
                 
                 VStack {
                     if !isStartingDrivingMode {
+                        LabeledImage(
+                            icon: "car",
+                            text: "Driving Mode: Off"
+                        )
                         
-                        Image(systemName: "car")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 34)
-                            .padding()
-                        Text("Driving Mode: OFF")
-                            .font(.title3.bold())
-                        
-                        
-                        Button {
-                            isStartingDrivingMode = !isStartingDrivingMode
-                        } label: {
-                            Label("car.front.waves.left.and.right.and.up.fill", systemImage: "play.fill")
-                                .labelStyle(.iconOnly)
+                        IconButton(icon: "play.fill") {
+                            isStartingDrivingMode = true
                         }
+                        .padding(.top, 16)
                     }
                     else if countdown < 0 {
-                        Image(systemName: "car")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 34)
-                            .padding()
-                        Text("Driving Mode: ON")
-                            .font(.title3.bold())
+                        LabeledImage(
+                            icon: "car.front.waves.left.and.right.and.up.fill",
+                            text: "Driving Mode: On"
+                        )
                         
-                        
-                        Button {
-                            isStartingDrivingMode = !isStartingDrivingMode
+                        IconButton(icon: "stop.fill") {
+                            isStartingDrivingMode = false
                             countdown = 5
-                        } label: {
-                            Label("", systemImage: "stop.fill")
-                                .labelStyle(.iconOnly)
                         }
+                        .padding(.top, 16)
                     } else {
                         CircularProgressView(countdown: $countdown)
                     }
                 }
-                .padding()
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            isSettingsVisible = true
-                        } label: {
-                            Image(systemName: "gear")
-                        }
+            }
+            .animation(.easeInOut(duration: 0.3), value: countdown)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        isSettingsVisible = true
+                    } label: {
+                        Image(systemName: "gear")
                     }
                 }
-                
             }
             .sheet(isPresented: $isSettingsVisible) {
                 SettingsView()
@@ -73,10 +59,6 @@ struct ContentView: View {
 
     }
 }
-
-// Onboarding Screen
-// Widget
-// HIG Watch
 
 #Preview {
     ContentView()
