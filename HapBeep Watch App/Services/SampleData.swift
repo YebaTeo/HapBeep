@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import SwiftUI
 
 
 class SampleData {
@@ -31,9 +32,9 @@ class SampleData {
     
     private func insertSampleData() {
         // Inserting categories
-        let informational = Category(name: "Information", severity: 0)
-        let caution = Category(name: "Caution", severity: 1)
-        let critical = Category(name: "Critical", severity: 2)
+        let informational = Category(name: "Information", severity: 0, color: .blue, hapticPattern: .information)
+        let caution = Category(name: "Caution", severity: 1, color: .yellow, hapticPattern: .caution)
+        let critical = Category(name: "Critical", severity: 2, color: .red, hapticPattern: .critical)
         
         context.insert(informational)
         context.insert(caution)

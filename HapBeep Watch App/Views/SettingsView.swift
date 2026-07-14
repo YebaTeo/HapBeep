@@ -18,7 +18,7 @@ struct SettingsView: View {
                             Spacer()
                             
                             HStack {
-                                Text("Haptic 1")
+                                Text(category.hapticPattern.rawValue)
                                     .font(.system(.caption))
                                 Image(systemName: "chevron.right")
                                     .font(.system(.caption2))
