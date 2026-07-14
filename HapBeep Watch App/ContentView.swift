@@ -9,13 +9,22 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, Alief!")
+        NavigationStack {
+            VStack {
+                Text("Welcome to HapBeep App!")
+                    .multilineTextAlignment(.center)
+            }
+            .padding()
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        SettingsView()
+                    } label: {
+                        Image(systemName: "gear")
+                    }
+                }
+            }
         }
-        .padding()
     }
 }
 
