@@ -2,6 +2,8 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    @State var isSettingsVisible: Bool = false
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -11,16 +13,23 @@ struct ContentView: View {
             .padding()
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        SettingsView()
+                    Button {
+                        isSettingsVisible = true
                     } label: {
                         Image(systemName: "gear")
                     }
                 }
             }
+            .sheet(isPresented: $isSettingsVisible) {
+                SettingsView()
+            }
         }
     }
 }
+
+// Onboarding Screen
+// Widget
+// HIG Watch
 
 #Preview {
     ContentView()

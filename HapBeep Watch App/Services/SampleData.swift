@@ -30,40 +30,55 @@ class SampleData {
     }
     
     private func insertSampleData() {
-        for category in Category.mockData {
-            context.insert(category)
+        // Inserting categories
+        let informational = Category(name: "Information", severity: 0)
+        let caution = Category(name: "Caution", severity: 1)
+        let critical = Category(name: "Critical", severity: 2)
+        
+        context.insert(informational)
+        context.insert(caution)
+        context.insert(critical)
+        
+        // Inserting informational sounds
+        let informationalSounds = [
+            "Parking Sensor",
+            "Knocking",
+        ]
+        
+        for sound in informationalSounds {
+            let sound = Sound(name: sound, category: informational)
+            context.insert(sound)
         }
         
-        for sound in Sound.mockData {
+        // Inserting caution sounds
+        let cautionSounds: [String] = [
+            "Horns",
+            "Approaching Vehicle",
+        ]
+        
+        for sound in cautionSounds {
+            let sound = Sound(name: sound, category: caution)
+            context.insert(sound)
+        }
+        
+        // Inserting critical sounds
+        let criticalSounds: [String] = [
+            "Sirens",
+            "Nearby Crash",
+            "Flat Tire",
+            "Tire Screeching",
+            "Metal Rattling"
+        ]
+        
+        for sound in criticalSounds {
+            let sound = Sound(name: sound, category: critical)
             context.insert(sound)
         }
         
         do {
             try context.save()
         } catch {
-            fatalError("Failed to insert sample data: \(error)")
+            print("Failed to insert sample data: \(error)")
         }
     }
-}
-
-extension Sound {
-    static let mockData: [Sound] = [
-        .init(name: "Parking Sensor", category: Category.mockData[0]),
-        .init(name: "Knocking", category: Category.mockData[0]),
-        .init(name: "Horns", category: Category.mockData[1]),
-        .init(name: "Approaching Vehicle", category: Category.mockData[1]),
-        .init(name: "Sirens", category: Category.mockData[2]),
-        .init(name: "Nearby Crash", category: Category.mockData[2]),
-        .init(name: "Flat Tire", category: Category.mockData[2]),
-        .init(name: "Tire Screeching", category: Category.mockData[2]),
-        .init(name: "Metal Rattling", category: Category.mockData[2]),
-    ]
-}
-
-extension Category {
-    static let mockData: [Category] = [
-        .init(name: "Informational", severity: 0),
-        .init(name: "Caution", severity: 1),
-        .init(name: "Critical", severity: 2),
-    ]
 }

@@ -1,29 +1,29 @@
-//
-//  SettingsView.swift
-//  HapBeep Watch App
-//
-//  Created by Michael Geraldi on 14/07/26.
-//
-
 import SwiftUI
 import SwiftData
 
 struct SettingsView: View {
     @Query(sort: \Category.severity) var categories: [Category]
+    @State var selectedCategory: Category? = nil
     
     var body: some View {
         VStack {
             List {
                 ForEach(categories) { category in
-                    NavigationLink {
-                        Text(category.name)
+                    Button {
+                        selectedCategory = category
                     } label: {
                         HStack {
                             Text(category.name)
+                            
                             Spacer()
-                            Text("Haptic 1")
-                                .font(.system(.caption))
-                                .foregroundColor(.secondary)
+                            
+                            HStack {
+                                Text("Haptic 1")
+                                    .font(.system(.caption))
+                                Image(systemName: "chevron.right")
+                                    .font(.system(.caption2))
+                            }
+                            .foregroundColor(.secondary)
                         }
                     }
                 }
@@ -31,6 +31,9 @@ struct SettingsView: View {
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode( .inline)
+        .sheet(item: $selectedCategory) { category in
+            SettingsDetailView(category: category)
+        }
     }
 }
 
