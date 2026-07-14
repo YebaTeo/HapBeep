@@ -42,13 +42,14 @@ struct ContentView: View {
                     }
                 }
             }
-            .animation(.easeInOut(duration: 0.3), value: countdown)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isSettingsVisible = true
-                    } label: {
-                        Image(systemName: "gear")
+                if !isStartingDrivingMode {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            isSettingsVisible = true
+                        } label: {
+                            Image(systemName: "gear")
+                        }
                     }
                 }
             }
