@@ -43,7 +43,16 @@ struct ContentView: View {
                 }
             }
             .toolbar {
-                if !isStartingDrivingMode {
+                if countdown > -1 && isStartingDrivingMode {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            isStartingDrivingMode = false
+                        } label: {
+                            Image(systemName: "xmark")
+                                .foregroundStyle(.red)
+                        }
+                    }
+                } else if !isStartingDrivingMode {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             isSettingsVisible = true
