@@ -10,6 +10,7 @@ struct ContentView: View {
     @State private var selectedIndex: Int = 0
 
     @Query(sort: \Sound.name) private var sounds: [Sound]
+    @State private var player = VocabularyPlayer()
     
     private var backgroundColor: Color {
         if !isStartingDrivingMode || countdown >= 0{
@@ -95,6 +96,8 @@ struct ContentView: View {
                         print(activeSound?.name ?? "nil")
 
                         selectedIndex = (selectedIndex + 1) % sounds.count
+                        
+                        player.play(activeSound?.category.hapticPattern ?? .caution)
 
                     } label: {
                         Image(systemName: "play")
