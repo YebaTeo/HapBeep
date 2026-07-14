@@ -6,17 +6,17 @@ struct SettingsDetailView: View {
     
     var body: some View {
         List {
-            Section("Choose Haptic") {
+            Section("Haptic Patterns") {
                 Button("Haptics 1") {}
                 Button("Haptics 2") {}
                 Button("Haptics 3") {}
             }
             
-            Section("Toggle Sounds") {
+            Section("Sounds") {
                 ForEach(category.sounds) { sound in
-                    Toggle(isOn: .constant(true)) {
-                        Text(sound.name)
-                    }
+                    @Bindable var sound = sound
+                    
+                    Toggle(sound.name, isOn: $sound.isActive)
                 }
             }
         }
