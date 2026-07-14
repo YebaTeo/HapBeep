@@ -4,11 +4,8 @@
 //
 //  Created by Yeba Teo on 14/07/26.
 //
-//  Drop this file into the Watch target. It plugs into the Haptic Lab app
-//  via RoadPatternsSection, or into production via VocabularyPlayer.play(_:).
-//
 import Foundation
-import SwiftUI
+import Observation
 import WatchKit
 
 // MARK: - Pattern model
@@ -176,50 +173,4 @@ final class VocabularyPlayer {
         isPlaying = false
         nowPlaying = nil
     }
-}
-
-// MARK: - Haptic Lab section (drop into HapticSamplerView's List)
-
-struct RoadPatternsSection: View {
-    var player: VocabularyPlayer
-
-    var body: some View {
-        Section("Alert level") {
-            ForEach(RoadPattern.allCases) { pattern in
-                Button {
-                    player.play(pattern)
-                } label: {
-                    HStack {
-                        Text(pattern.rawValue)
-                        if player.nowPlaying == pattern {
-                            Spacer()
-                            Image(systemName: "waveform")
-                        }
-                    }
-                }
-            }
-            if player.isPlaying {
-                Button("Stop", role: .destructive) { player.stop() }
-            }
-        }
-    }
-}
-
-// MARK: - Standalone tester (or embed RoadPatternsSection in the existing lab)
-
-struct VocabularyTesterView: View {
-    @State private var player = VocabularyPlayer()
-
-    var body: some View {
-        NavigationStack {
-            List {
-                RoadPatternsSection(player: player)
-            }
-            .navigationTitle("HapBeep")
-        }
-    }
-}
-
-#Preview {
-    VocabularyTesterView()
 }
