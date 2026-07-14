@@ -11,6 +11,7 @@ struct ContentView: View {
 
     @Query(sort: \Sound.name) private var sounds: [Sound]
     @State private var player = VocabularyPlayer()
+    @State private var classifier = SystemAudioClassifier()
     
     private var backgroundColor: Color {
         if !isStartingDrivingMode || countdown >= 0{
@@ -23,6 +24,10 @@ struct ContentView: View {
         if !isStartingDrivingMode || countdown >= 0{
             return "Driving Mode: ON"
         }
+        if let detectedSound = classifier.detectedSound {
+            return detectedSound
+        }
+        print(classifier.detectedSound)
         return activeSound?.name ?? "Driving Mode: ON"
     }
     
@@ -104,6 +109,21 @@ struct ContentView: View {
                             .resizable()
                             .frame(width: 10, height: 10)
                     }
+                }
+            }
+            .task {
+                if isStartingDrivingMode, countdown < 0 {
+                    guard !sounds.isEmpty else { return }
+
+                    activeSound = sounds[selectedIndex]
+
+                    print(activeSound?.name ?? "nil")
+
+                    selectedIndex = (selectedIndex + 1) % sounds.count
+                    
+                    player.play(activeSound?.category.hapticPattern ?? .caution)
+                    try? classifier.start()
+                    
                 }
             }
             .sheet(isPresented: $isSettingsVisible) {
