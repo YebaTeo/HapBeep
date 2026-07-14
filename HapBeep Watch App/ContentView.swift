@@ -1,11 +1,5 @@
-//
-//  ContentView.swift
-//  HapBeep Watch App
-//
-//  Created by Yeba Teo on 14/07/26.
-//
-
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     var body: some View {
@@ -30,4 +24,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(SampleData.shared.container)
 }

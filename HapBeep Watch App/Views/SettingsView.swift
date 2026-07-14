@@ -6,11 +6,28 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
+    @Query(sort: \Category.severity) var categories: [Category]
+    
     var body: some View {
         VStack {
-            Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+            List {
+                ForEach(categories) { category in
+                    NavigationLink {
+                        Text(category.name)
+                    } label: {
+                        HStack {
+                            Text(category.name)
+                            Spacer()
+                            Text("Haptic 1")
+                                .font(.system(.caption))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+            }
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode( .inline)
@@ -20,5 +37,6 @@ struct SettingsView: View {
 #Preview {
     NavigationStack {
         SettingsView()
+            .modelContainer(SampleData.shared.container)
     }
 }
