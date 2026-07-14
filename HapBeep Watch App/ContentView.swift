@@ -5,6 +5,7 @@ struct ContentView: View {
     @State private var isStartingDrivingMode: Bool = false
     @State private var countdown = 5
 //    let timer = Timer.publish(every: 1, on: .main, in: .common).connect()
+    
     @State var isSettingsVisible: Bool = false
     
     var body: some View {
@@ -56,8 +57,8 @@ struct ContentView: View {
                 .padding()
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        NavigationLink {
-                            SettingsView()
+                        Button {
+                            isSettingsVisible = true
                         } label: {
                             Image(systemName: "gear")
                         }
