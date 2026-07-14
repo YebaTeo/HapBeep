@@ -3,6 +3,8 @@ import SwiftData
 
 struct ContentView: View {
     @State private var isStartingDrivingMode: Bool = false
+    @State private var countdown = 5
+//    let timer = Timer.publish(every: 1, on: .main, in: .common).connect()
     var body: some View {
         NavigationStack {
             ZStack {
@@ -10,25 +12,44 @@ struct ContentView: View {
                     .ignoresSafeArea()
                 
                 VStack {
-                    if isStartingDrivingMode {
+                    if !isStartingDrivingMode {
                         
                         Image(systemName: "car")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 34)
                             .padding()
-                        Text("Driving Mode: off")
+                        Text("Driving Mode: OFF")
                             .font(.title3.bold())
                         
                         
                         Button {
                             isStartingDrivingMode = !isStartingDrivingMode
                         } label: {
-                            Label("", systemImage: "play.fill")
+                            Label("car.front.waves.left.and.right.and.up.fill", systemImage: "play.fill")
                                 .labelStyle(.iconOnly)
                         }
                     }
-                    ProgressView(value: 0)
+                    else if countdown < 0 {
+                        Image(systemName: "car")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 34)
+                            .padding()
+                        Text("Driving Mode: ON")
+                            .font(.title3.bold())
+                        
+                        
+                        Button {
+                            isStartingDrivingMode = !isStartingDrivingMode
+                            countdown = 5
+                        } label: {
+                            Label("", systemImage: "stop.fill")
+                                .labelStyle(.iconOnly)
+                        }
+                    } else {
+                        CircularProgressView(countdown: $countdown)
+                    }
                 }
                 .padding()
                 .toolbar {
