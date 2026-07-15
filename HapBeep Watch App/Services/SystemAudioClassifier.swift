@@ -21,7 +21,7 @@ final class SystemAudioClassifier: NSObject {
     private var request: SNClassifySoundRequest?
     
     private let supportedSound: Set<String> = [
-        "car_horn", "siren", "vehicle", "reverse_beeper"
+        "car_horn", "traffic_noise", "vehicle_skidding", "reverse_beeps", "knock", "emergency_vehicle"
     ]
     
     func start() throws {
@@ -63,7 +63,7 @@ extension SystemAudioClassifier : SNResultsObserving {
             return
         }
         
-        guard best.confidence > 0.6 else {
+        guard best.confidence > 0.2 else {
             return
         }
         
