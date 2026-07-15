@@ -93,24 +93,6 @@ struct ContentView: View {
                         }
                     }
                 }
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        guard !sounds.isEmpty else { return }
-
-                        activeSound = sounds[selectedIndex]
-
-                        print(activeSound?.name ?? "nil")
-
-                        selectedIndex = (selectedIndex + 1) % sounds.count
-                        
-                        player.play(activeSound?.category.hapticPattern ?? .caution)
-
-                    } label: {
-                        Image(systemName: "play")
-                            .resizable()
-                            .frame(width: 10, height: 10)
-                    }
-                }
             }
             .onChange(of: isStartingDrivingMode) { isActive in
                 if isActive {
