@@ -12,32 +12,34 @@ struct OnBoardingWelcomeView: View {
     private var hasCompletedOnBoarding: Bool = false
     
     var body: some View {
-        VStack{
-            VStack(spacing: 4) {
-                Text("HapBeep")
-                    .font(.title3)
-                    .fontWeight(.semibold)
+        GradientBackground(color: .blue) {
+            VStack {
+                VStack(spacing: 4) {
+                    Text("HapBeep")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    
+                    Text("Hear the road through your wrist")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
                 
-                Text("Hear the road through your wrist")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-            
+                }
+                .padding(.bottom, 28)
+                
+                NavigationLink("Learn our haptics") {
+                   CriticalAlertInfoView()
+                }
+                .buttonStyle(.glassProminent)
+                .tint(.blue)
+                
+                Button("Skip") {
+                    hasCompletedOnBoarding = true
+                }
+                .buttonStyle(.glass)
             }
-            .padding(.bottom, 28)
-            
-            NavigationLink("Learn our haptics") {
-               CriticalAlertInfoView()
-            }
-            .buttonStyle(.glassProminent)
-            .tint(.blue)
-            
-            Button("Skip") {
-                hasCompletedOnBoarding = true
-            }
-            .buttonStyle(.glass)
         }
     }
 }

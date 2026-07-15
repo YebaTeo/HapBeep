@@ -9,38 +9,40 @@ import SwiftUI
 
 struct CriticalAlertInfoView: View {
     var body: some View {
-        VStack{
+        GradientBackground(color: .red) {
             VStack{
-                Text("Critical")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.red)
+                VStack{
+                    Text("Critical")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.red)
+                    
+                    Text("Pull over immediately and inspect your vehicle")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.bottom, 16)
                 
-                Text("Pull over immediately and inspect your vehicle")
-                    .font(.caption)
-                    .foregroundStyle(.red)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
+                
+                HStack (spacing: 15) {
+                    Image("IconMetalRattling")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 40, height: 40)
+                    Image("IconSirens")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 40, height: 40)
+                    Image("IconTireFlat")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 40, height: 40)
+                }
+                
+                Spacer()
             }
-            .padding(.bottom, 16)
-            
-            
-            HStack (spacing: 15) {
-                Image("IconMetalRattling")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                Image("IconSirens")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                Image("IconTireFlat")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-            }
-            
-            Spacer()
         }
         .toolbar {
             ToolbarItem(placement: .bottomBar) {

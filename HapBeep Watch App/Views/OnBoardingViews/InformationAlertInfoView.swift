@@ -10,38 +10,40 @@ import SwiftUI
 
 struct InformationAlertInfoView: View {
     var body: some View {
-        VStack {
-            VStack{
-                Text("Information")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.mint)
+        GradientBackground(color: .teal) {
+            VStack {
+                VStack{
+                    Text("Information")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.mint)
+                    
+                    Text("Check your dashboard for system alerts")
+                        .font(.caption)
+                        .foregroundStyle(.mint)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.bottom, 16)
                 
-                Text("Check your dashboard for system alerts")
-                    .font(.caption)
-                    .foregroundStyle(.mint)
-                    .multilineTextAlignment(.center)
+                HStack (spacing: 15) {
+                    Image("IconDashboardSound")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 40, height: 40)
+                    
+                    Image("IconKnocking")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 40, height: 40)
+                    
+                    Image("IconEngine")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 40, height: 40)
+                }
+                
+                Spacer()
             }
-            .padding(.bottom, 16)
-            
-            HStack (spacing: 15) {
-                Image("IconDashboardSound")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                
-                Image("IconKnocking")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                
-                Image("IconEngine")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-            }
-            
-            Spacer()
         }
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
