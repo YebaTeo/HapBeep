@@ -17,6 +17,7 @@ struct TutorialView: View {
             }
         }
         .toolbar(.hidden, for: .bottomBar)
+        .navigationTitle("Alert Types")
     }
 }
 

@@ -19,7 +19,7 @@ struct HapBeep_Watch_AppApp: App {
                     }
                 }
             }
-            .modelContainer(SampleData.shared.container)
+            .modelContainer(DataManager.shared.container)
         }
     }
 }

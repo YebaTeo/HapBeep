@@ -87,8 +87,8 @@ struct ContentView: View {
                 }
             } else if !isStartingDrivingMode {
                 ToolbarItem(placement: .topBarLeading) {
-                    NavigationLink {
-                        TutorialView()
+                    Button {
+                        isTutorialVisible = true
                     } label: {
                         Image(systemName: "questionmark")
                     }
@@ -129,12 +129,15 @@ struct ContentView: View {
         .sheet(isPresented: $isSettingsVisible) {
             SettingsView()
         }
+        .sheet(isPresented: $isTutorialVisible) {
+            TutorialView()
+        }
     }
 }
 
 #Preview {
     NavigationStack {
         ContentView()
-            .modelContainer(SampleData.shared.container)
+            .modelContainer(DataManager.shared.container)
     }
 }
