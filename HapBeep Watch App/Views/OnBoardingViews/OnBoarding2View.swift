@@ -8,24 +8,31 @@
 import Foundation
 import SwiftUI
 
-struct OnBoarding3View: View {
+struct OnBoarding2View: View {
     
 
     var body: some View {
         
         VStack {
-            Text("HapBeep")
+            Image(systemName: "waveform")
+                .foregroundStyle(.blue)
+                .font(.largeTitle)
+                .padding(10)
+            
+            Text("Sound to Haptics")
                 .font(.body)
                 .fontWeight(.semibold)
             
-            Text("Hear the road through your wrist.")
+            Text("HapBeep listens to your sorroundings and convert the sounds into vibrations.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         }
+        
+        
     }
 }
 
 #Preview {
-    OnBoarding3View()
+    OnBoarding2View()
 }
