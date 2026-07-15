@@ -50,6 +50,6 @@ struct SettingsDetailView: View {
 #Preview {
     NavigationStack {
         SettingsDetailView(category: Category(name: "Information", severity: 0, color: .blue, hapticPattern: .information))
-            .modelContainer(SampleData.shared.container)
+            .modelContainer(DataManager.shared.container)
     }
 }

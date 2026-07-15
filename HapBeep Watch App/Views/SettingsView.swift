@@ -29,7 +29,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .navigationTitle("Settings")
+        .navigationTitle("Alert Settings")
         .navigationBarTitleDisplayMode( .inline)
         .sheet(item: $selectedCategory) { category in
             SettingsDetailView(category: category)
@@ -40,6 +40,6 @@ struct SettingsView: View {
 #Preview {
     NavigationStack {
         SettingsView()
-            .modelContainer(SampleData.shared.container)
+            .modelContainer(DataManager.shared.container)
     }
 }

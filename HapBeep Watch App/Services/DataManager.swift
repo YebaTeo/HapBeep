@@ -3,8 +3,8 @@ import SwiftData
 import SwiftUI
 
 
-class SampleData {
-    static let shared = SampleData()
+class DataManager {
+    static let shared = DataManager()
     let container: ModelContainer
     let context: ModelContext
     
@@ -12,7 +12,7 @@ class SampleData {
         let schema = Schema([Sound.self, Category.self])
         
         let configurations = ModelConfiguration(
-            isStoredInMemoryOnly: true,
+            isStoredInMemoryOnly: false,
             allowsSave: true
         )
         
@@ -31,6 +31,13 @@ class SampleData {
     }
     
     private func insertSampleData() {
+        let categoryDescriptor = FetchDescriptor<Category>()
+            let existingCount = (try? context.fetchCount(categoryDescriptor)) ?? 0
+            
+        guard existingCount == 0 else {
+            return
+        }
+        
         // Inserting categories
         let informational = Category(name: "Information", severity: 0, color: .teal, hapticPattern: .information)
         let caution = Category(name: "Caution", severity: 1, color: .orange, hapticPattern: .caution)
