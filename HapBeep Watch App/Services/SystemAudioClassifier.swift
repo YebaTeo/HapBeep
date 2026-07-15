@@ -25,6 +25,7 @@ final class SystemAudioClassifier: NSObject {
     ]
     
     func start() throws {
+        guard !audioEngine.isRunning else { return }
         let inputNode = audioEngine.inputNode
         let format = inputNode.outputFormat(forBus: 0)
         
@@ -37,7 +38,7 @@ final class SystemAudioClassifier: NSObject {
         
         try analyzer.add(request, withObserver: self)
         
-        inputNode.installTap(onBus: 0, bufferSize: 8192, format: format) { [weak self] buffer, time in
+        inputNode.installTap(onBus: 0, bufferSize: 2048, format: format) { [weak self] buffer, time in
             self?.analyzer?.analyze(buffer, atAudioFramePosition: time.sampleTime)
         }
         

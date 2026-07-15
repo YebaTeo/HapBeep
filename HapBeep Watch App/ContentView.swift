@@ -10,6 +10,7 @@ struct ContentView: View {
     @State private var selectedIndex: Int = 0
 
     @Query(sort: \Sound.name) private var sounds: [Sound]
+    @Query(sort: \Category.severity) private var categories: [Category]
     @State private var player = VocabularyPlayer()
     @State private var classifier = SystemAudioClassifier()
     
@@ -111,27 +112,27 @@ struct ContentView: View {
                     }
                 }
             }
-            .task {
-                    guard !sounds.isEmpty else { return }
-
-                    activeSound = sounds[selectedIndex]
-
+            .onChange(of: isStartingDrivingMode) { isActive in
+                if isActive {
                     try? classifier.start()
-                    print(activeSound?.name ?? "nil")
-
-                    selectedIndex = (selectedIndex + 1) % sounds.count
-                    
-                player.play(activeSound?.category.hapticPattern ?? .caution)
-                    
-                
+                } else {
+                    classifier.stop()
+                    classifier.detectedSound = nil
+                }
             }
-            .onChange(of: classifier.detectedSound) { _, detected in
+            .onChange(of: classifier.detectedSound) { detected in
                 guard let detected else { return }
-
-                if let sound = sounds.first(where: { $0.name == detected }) {
-                    activeSound = sound
-                    currentBackgroundColor = sound.category.color
-                    player.play(sound.category.hapticPattern)
+                let pattern = RoadPattern.pattern(for: detected)
+                player.play(pattern)
+                // priority 0 → severity 0, 50 → 1, 100 → 2
+                if let category = categories.first(where: { $0.severity == pattern.priority / 50 }) {
+                    currentBackgroundColor = category.color
+                }
+            }
+            .onChange(of: player.isPlaying) { isPlaying in
+                if !isPlaying {
+                    currentBackgroundColor = .primaryDarkBlue
+                    classifier.detectedSound = nil
                 }
             }
             .sheet(isPresented: $isSettingsVisible) {

@@ -25,6 +25,15 @@ enum RoadPattern: String, CaseIterable, Identifiable, Codable {
 
     var id: String { rawValue }
 
+    /// Maps a SoundAnalysis classifier identifier to the appropriate haptic tier.
+    static func pattern(for classifierIdentifier: String) -> RoadPattern {
+        switch classifierIdentifier {
+        case "emergency_vehicle", "vehicle_skidding": return .critical
+        case "car_horn", "reverse_beeps":             return .caution
+        default:                                      return .information
+        }
+    }
+
     /// Higher wins preemption in the detection state machine.
     var priority: Int {
         switch self {
