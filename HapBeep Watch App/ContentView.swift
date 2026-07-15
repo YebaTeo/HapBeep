@@ -13,12 +13,7 @@ struct ContentView: View {
     @State private var player = VocabularyPlayer()
     @State private var classifier = SystemAudioClassifier()
     
-    private var backgroundColor: Color {
-        if !isStartingDrivingMode || countdown >= 0{
-            return .primaryDarkBlue
-        }
-        return activeSound?.category.color ?? .primaryDarkBlue
-    }
+    @State private var currentBackgroundColor: Color = .primaryDarkBlue
     
     private var activeSoundName: String {
         if !isStartingDrivingMode || countdown >= 0{
@@ -27,7 +22,6 @@ struct ContentView: View {
         if let detectedSound = classifier.detectedSound {
             return detectedSound
         }
-        print(classifier.detectedSound)
         return activeSound?.name ?? "Driving Mode: ON"
     }
     
@@ -42,8 +36,13 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(colors: [.black, backgroundColor], startPoint: .top, endPoint: .bottom)
-                    .ignoresSafeArea()
+                LinearGradient(
+                    colors: [.black, currentBackgroundColor],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .animation(.easeInOut(duration: 0.3), value: currentBackgroundColor)
+                .ignoresSafeArea()
                 
                 VStack {
                     if !isStartingDrivingMode {
@@ -66,6 +65,7 @@ struct ContentView: View {
                         IconButton(icon: "stop.fill") {
                             isStartingDrivingMode = false
                             countdown = 5
+                            activeSound  = nil
                         }
                         .padding(.top, 16)
                     } else {
@@ -112,18 +112,26 @@ struct ContentView: View {
                 }
             }
             .task {
-                if isStartingDrivingMode, countdown < 0 {
                     guard !sounds.isEmpty else { return }
 
                     activeSound = sounds[selectedIndex]
 
+                    try? classifier.start()
                     print(activeSound?.name ?? "nil")
 
                     selectedIndex = (selectedIndex + 1) % sounds.count
                     
-                    player.play(activeSound?.category.hapticPattern ?? .caution)
-                    try? classifier.start()
+                player.play(activeSound?.category.hapticPattern ?? .caution)
                     
+                
+            }
+            .onChange(of: classifier.detectedSound) { _, detected in
+                guard let detected else { return }
+
+                if let sound = sounds.first(where: { $0.name == detected }) {
+                    activeSound = sound
+                    currentBackgroundColor = sound.category.color
+                    player.play(sound.category.hapticPattern)
                 }
             }
             .sheet(isPresented: $isSettingsVisible) {

@@ -12,7 +12,7 @@ class SampleData {
         let schema = Schema([Sound.self, Category.self])
         
         let configurations = ModelConfiguration(
-            isStoredInMemoryOnly: false,
+            isStoredInMemoryOnly: true,
             allowsSave: true
         )
         
