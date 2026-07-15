@@ -6,29 +6,33 @@ struct OnBoarding3View: View {
             Text("Feels what matters")
                 .font(.subheadline.bold())
             
-            List {
-                ColoredList(color: .teal) {
-                    OnBoarding3ListItem(
-                        title: "Information",
-                        subtitle: "For your awareness"
-                    )
-                }
-                
-                ColoredList(color: .orange) {
-                    OnBoarding3ListItem(
-                        title: "Caution",
-                        subtitle: "Check when safe"
-                    )
-                }
-                
-                ColoredList(color: .red) {
-                    OnBoarding3ListItem(
-                        title: "Critical",
-                        subtitle: "Requires immediate action"
-                    )
+            ScrollView{
+                VStack(spacing: 4) {
+                    ColoredList(color: .teal) {
+                        OnBoarding3ListItem(
+                            title: "Information",
+                            subtitle: "For your awareness"
+                        )
+                    }
+                    
+                    ColoredList(color: .orange) {
+                        OnBoarding3ListItem(
+                            title: "Caution",
+                            subtitle: "Check when safe"
+                        )
+                    }
+                    
+                    ColoredList(color: .red) {
+                        OnBoarding3ListItem(
+                            title: "Critical",
+                            subtitle: "Requires immediate action"
+                        )
+                    }
                 }
             }
+            .frame(maxHeight: .infinity)
         }
+        .frame(maxHeight: .infinity)
     }
 }
 

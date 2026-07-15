@@ -20,6 +20,8 @@ struct OnBoarding5View: View {
                 Text("You can change your alert settings anytime in the app")
                     .font(.caption2)
                     .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, 8)
             .padding(.top, 16)
