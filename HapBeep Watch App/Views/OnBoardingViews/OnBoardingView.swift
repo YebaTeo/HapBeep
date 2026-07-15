@@ -8,40 +8,36 @@
 import SwiftUI
 
 struct OnBoardingView: View {
-    @State private var currentPage: Int = 2
+    @AppStorage("hasCompletedOnBoarding")
+    private var hasCompletedOnBoarding: Bool = false
     
     var body: some View {
-        ScrollView {
-            VStack {
-                if currentPage == 0 {
-                    OnBoarding1View()
-                } else if currentPage == 1 {
-                    OnBoarding2View()
-                } else if currentPage == 2 {
-                    OnBoarding3View()
-                } else if currentPage == 3 {
-                    OnBoarding4View()
-                } else if currentPage == 4 {
-                    OnBoarding5View()
-                }
+        VStack{
+            VStack(spacing: 4) {
+                Text("HapBeep")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                
+                Text("Hear the road through your wrist")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+            
             }
-            .padding(.bottom, 16)
+            .padding(.bottom, 28)
             
-            Spacer()
-            
-            
-        }
-        .toolbar {
-            ToolbarItem(placement: .bottomBar) {
-                Button("Continue") {
-                    if currentPage == 4 {
-                        currentPage = 0
-                    } else {
-                        currentPage += 1
-                    }
-                }
-                .buttonStyle(.glass)
+            NavigationLink("Learn our haptics") {
+               Haptics1()
             }
+            .buttonStyle(.glassProminent)
+            .tint(.blue)
+            
+            Button("Skip") {
+                hasCompletedOnBoarding = true
+            }
+            .buttonStyle(.glass)
         }
     }
 }

@@ -8,27 +8,42 @@
 import SwiftUI
 
 struct OnBoarding5View: View {
+    @AppStorage("hasCompletedOnBoarding")
+    private var hasCompletedOnBoarding: Bool = false
+    
     var body: some View {
         VStack {
             Image(systemName: "checkmark.circle.fill")
                 .font(.largeTitle)
                 .foregroundColor(.accentColor)
             
-            VStack {
+            VStack(spacing: 4) {
                 Text("You are all set")
                     .font(.title3.bold())
-                Text("You can change your alert settings anytime in the app")
+                Text("HapBeeb is ready to assist you!")
                     .font(.caption2)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, 8)
-            .padding(.top, 16)
+            .padding(.top, 8)
+            
+            Spacer()
+        }
+        .toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                Button("Get Started") {
+                    hasCompletedOnBoarding = true
+                }
+                .buttonStyle(.glass)
+            }
         }
     }
 }
 
 #Preview {
-    OnBoarding5View()
+    NavigationStack {
+        OnBoarding5View()
+    }
 }

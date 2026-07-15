@@ -8,42 +8,55 @@
 
 import SwiftUI
 
-struct Haptics3: View {
+struct Haptics3: View {    
     var body: some View {
-        VStack{
-            Text("Information")
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundStyle(.mint)
+        VStack {
+            VStack{
+                Text("Information")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.mint)
+                
+                Text("Check your dashboard for system alerts")
+                    .font(.caption)
+                    .foregroundStyle(.mint)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.bottom, 16)
             
-            Text("Check your dashboard for system alerts")
-                .font(.caption)
-                .foregroundStyle(.mint)
-                .multilineTextAlignment(.center)
+            HStack (spacing: 15) {
+                Image("IconDashboardSound")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 40, height: 40)
+                
+                Image("IconKnocking")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 40, height: 40)
+                
+                Image("IconEngine")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 40, height: 40)
+            }
+            
+            Spacer()
         }
-        .padding(.vertical, 20)
-        
-        HStack (spacing: 15) {
-            Image("IconDashboardSound")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 40, height: 40)
-            
-            Image("IconKnocking")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 40, height: 40)
-            
-            Image("IconEngine")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 40, height: 40)
+        .toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                NavigationLink("Continue") {
+                    OnBoarding5View()
+                }
+                .buttonStyle(.glass)
+            }
         }
-        
     }
 }
 
 #Preview {
-    Haptics3()
+    NavigationStack {
+        Haptics3()
+    }
 }
 

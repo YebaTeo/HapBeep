@@ -9,11 +9,8 @@ import SwiftUI
 
 struct Haptics1: View {
     var body: some View {
-        
         VStack{
-            
             VStack{
-                
                 Text("Critical")
                     .font(.subheadline)
                     .fontWeight(.bold)
@@ -23,8 +20,9 @@ struct Haptics1: View {
                     .font(.caption)
                     .foregroundStyle(.red)
                     .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(.vertical, 20)
+            .padding(.bottom, 16)
             
             
             HStack (spacing: 15) {
@@ -32,22 +30,31 @@ struct Haptics1: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 40, height: 40)
-                
                 Image("IconSirens")
                     .resizable()
                     .scaledToFill()
                     .frame(width: 40, height: 40)
-                
                 Image("IconTireFlat")
                     .resizable()
                     .scaledToFill()
                     .frame(width: 40, height: 40)
             }
             
+            Spacer()
+        }
+        .toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                NavigationLink("Continue") {
+                    Haptics2()
+                }
+                .buttonStyle(.glass)
+            }
         }
     }
 }
 
 #Preview {
-    Haptics1()
+    NavigationStack {
+        Haptics1()
+    }
 }

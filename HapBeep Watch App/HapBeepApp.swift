@@ -3,10 +3,23 @@ import SwiftData
 
 @main
 struct HapBeep_Watch_AppApp: App {
+    @AppStorage("hasCompletedOnBoarding")
+    private var hasCompleteOnBoarding: Bool = false
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .modelContainer(SampleData.shared.container)
+            Group {
+                if hasCompleteOnBoarding {
+                    NavigationStack {
+                        ContentView()
+                    }
+                } else {
+                    NavigationStack {
+                        OnBoardingView()
+                    }
+                }
+            }
+            .modelContainer(SampleData.shared.container)
         }
     }
 }

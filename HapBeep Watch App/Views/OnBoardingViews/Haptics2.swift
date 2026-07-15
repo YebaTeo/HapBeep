@@ -10,39 +10,52 @@ import SwiftUI
 
 struct Haptics2: View {
     var body: some View {
-        VStack{
-            Text("Caution")
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundStyle(.orange)
+        VStack {
+            VStack{
+                Text("Caution")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.orange)
+                
+                Text("Check your mirrors to see what's happening around")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.bottom, 16)
             
-            Text("Check your mirrors to see what's happening around your car")
-                .font(.caption)
-                .foregroundStyle(.orange)
-                .multilineTextAlignment(.center)
+            HStack (spacing: 15) {
+                Image("IconHonkCar")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 40, height: 40)
+                
+                Image("IconHonkMotorcycle")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 40, height: 40)
+                
+                Image("IconTireScreeching")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 40, height: 40)
+            }
+            
+            Spacer()
         }
-        .padding(.vertical, 10)
-        
-        HStack (spacing: 15) {
-            Image("IconHonkCar")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 40, height: 40)
-            
-            Image("IconHonkMotorcycle")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 40, height: 40)
-            
-            Image("IconTireScreeching")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 40, height: 40)
+        .toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                NavigationLink("Continue") {
+                    Haptics3()
+                }
+                .buttonStyle(.glass)
+            }
         }
-        
     }
 }
 
 #Preview {
-    Haptics2()
+    NavigationStack {
+        Haptics2()
+    }
 }
