@@ -10,7 +10,7 @@ import SwiftUI
 struct TutorialView: View {
     var body: some View {
         ScrollView {
-            VStack(spacing: 32) {
+            VStack(spacing: 24) {
                 CriticalAlertInfoView()
                 CautionAlertInfoView()
                 InformationAlertInfoView()

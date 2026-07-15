@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CriticalAlertInfoView: View {
     var body: some View {
-        GradientBackground(color: .red) {
+        Group {
             VStack{
                 VStack{
                     Text("Critical")
@@ -47,7 +47,9 @@ struct CriticalAlertInfoView: View {
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
                 NavigationLink("Continue") {
-                    CautionAlertInfoView()
+                    GradientBackground(color: .orange) {
+                        CautionAlertInfoView()
+                    }
                 }
                 .buttonStyle(.glass)
             }

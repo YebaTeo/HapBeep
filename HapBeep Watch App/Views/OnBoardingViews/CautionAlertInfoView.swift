@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CautionAlertInfoView: View {
     var body: some View {
-        GradientBackground(color: .orange) {
+        Group {
             VStack {
                 VStack{
                     Text("Caution")
@@ -48,7 +48,9 @@ struct CautionAlertInfoView: View {
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
                 NavigationLink("Continue") {
-                    InformationAlertInfoView()
+                    GradientBackground(color: .teal) {
+                        InformationAlertInfoView()
+                    }
                 }
                 .buttonStyle(.glass)
             }

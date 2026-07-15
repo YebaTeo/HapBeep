@@ -10,7 +10,7 @@ import SwiftUI
 
 struct InformationAlertInfoView: View {
     var body: some View {
-        GradientBackground(color: .teal) {
+        Group {
             VStack {
                 VStack{
                     Text("Information")
