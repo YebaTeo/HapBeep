@@ -25,7 +25,12 @@ struct ColoredList<Content: View>: View {
         }
         .foregroundStyle(color)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .listRowPlatterColor(color.opacity(0.2))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .background(color.opacity(0.2))
+        .clipShape(
+            RoundedRectangle(cornerRadius: 8)
+        )
     }
 }
 
