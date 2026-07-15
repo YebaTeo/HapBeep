@@ -8,8 +8,6 @@ import Foundation
 import Observation
 import WatchKit
 
-// MARK: - Pattern model
-
 struct HapticStep {
     let haptic: WKHapticType
     /// Pause AFTER this tap, in seconds.
@@ -17,20 +15,24 @@ struct HapticStep {
 }
 
 enum RoadPattern: String, CaseIterable, Identifiable, Codable {
-    // Information tier — calm, light (.click)
-    case information  = "ℹ️ Information"
-    case information2 = "ℹ️ Information 2"
-    case information3 = "ℹ️ Information 3"
-
-    // Caution tier — warning, medium (.directionUp)
-    case caution  = "⚠️ Caution"
-    case caution2 = "⚠️ Caution 2"
-    case caution3 = "⚠️ Caution 3"
-
-    // Critical tier — strongest (.notification), fixed
-    case critical = "🚨 Critical"
+    case information  = "Information"
+    case information2 = "Information 2"
+    case information3 = "Information 3"
+    case caution  = "Caution"
+    case caution2 = "Caution 2"
+    case caution3 = "Caution 3"
+    case critical = "Critical"
 
     var id: String { rawValue }
+
+    /// Maps a SoundAnalysis classifier identifier to the appropriate haptic tier.
+    static func pattern(for classifierIdentifier: String) -> RoadPattern {
+        switch classifierIdentifier {
+        case "emergency_vehicle", "vehicle_skidding": return .critical
+        case "car_horn", "reverse_beeps":             return .caution
+        default:                                      return .information
+        }
+    }
 
     /// Higher wins preemption in the detection state machine.
     var priority: Int {
@@ -40,7 +42,6 @@ enum RoadPattern: String, CaseIterable, Identifiable, Codable {
         case .critical:                                  return 100
         }
     }
-
     /// Repeat count — more urgent alerts repeat longer to cut through distraction.
     var alertRepeats: Int {
         switch self {
@@ -52,17 +53,12 @@ enum RoadPattern: String, CaseIterable, Identifiable, Codable {
 
     var steps: [HapticStep] {
         switch self {
-
-        // Rhythm: tick · tick · tick  (3 even beats)
         case .information:
             return [
                 .init(haptic: .success, delayAfter: 0.35),
                 .init(haptic: .success, delayAfter: 0.35),
                 .init(haptic: .success, delayAfter: 0.0),
             ]
-
-        // Rhythm: tick-tick-tick-tick  (4 rapid beats)
-        // Faster cadence — same light type, clearly more "busy" than the triple.
         case .information2:
             return [
                 .init(haptic: .success, delayAfter: 0.15),
@@ -71,16 +67,11 @@ enum RoadPattern: String, CaseIterable, Identifiable, Codable {
                 .init(haptic: .success, delayAfter: 0.0),
                 
             ]
-
-        // Rhythm: tick ········ tick  (2 slow beats)
-        // Minimal and widely spaced — simplest pattern in the info tier.
         case .information3:
             return [
                 .init(haptic: .success, delayAfter: 0.65),
                 .init(haptic: .success, delayAfter: 0.0),
             ]
-
-        // Rhythm: tap-tap ··· tap-tap  (double-knock)
         case .caution:
             return [
                 .init(haptic: .directionUp, delayAfter: 0.12),
@@ -88,18 +79,12 @@ enum RoadPattern: String, CaseIterable, Identifiable, Codable {
                 .init(haptic: .directionUp, delayAfter: 0.12),
                 .init(haptic: .directionUp, delayAfter: 0.0),
             ]
-
-        // Rhythm: tap-tap-tap  (triple rapid knock)
-        // Three tight taps with no internal gap — distinct from caution's paired shape.
         case .caution2:
             return [
                 .init(haptic: .directionUp, delayAfter: 0.12),
                 .init(haptic: .directionUp, delayAfter: 0.12),
                 .init(haptic: .directionUp, delayAfter: 0.0),
             ]
-
-        // Rhythm: tap ··· tap-tap ··· tap-tap-tap  (escalating 1-2-3)
-        // Builds in count each beat group — the escalation shape is unmistakable.
         case .caution3:
             return [
                 .init(haptic: .directionUp, delayAfter: 0.40),
@@ -109,8 +94,6 @@ enum RoadPattern: String, CaseIterable, Identifiable, Codable {
                 .init(haptic: .directionUp, delayAfter: 0.12),
                 .init(haptic: .directionUp, delayAfter: 0.0),
             ]
-
-        // Rhythm: brr-brr-brr ··· BANG · BANG · BANG  (burst then slams)
         case .critical:
             return [
                 .init(haptic: .notification, delayAfter: 0.09),
