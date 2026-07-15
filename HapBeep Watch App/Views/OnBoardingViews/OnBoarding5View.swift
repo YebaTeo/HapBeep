@@ -15,9 +15,9 @@ struct OnBoarding5View: View {
                 .foregroundColor(.accentColor)
             
             VStack {
-                Text("You are all set.")
+                Text("You are all set")
                     .font(.title3.bold())
-                Text("You can change your alert settings anytime in the app.")
+                Text("You can change your alert settings anytime in the app")
                     .font(.caption2)
                     .multilineTextAlignment(.center)
             }
