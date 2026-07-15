@@ -14,12 +14,10 @@ class Category {
 
     var color: Color {
         switch colorName {
-        case "red":    return .red
-        case "yellow": return .yellow
+        case "teal": return .teal
         case "orange": return .orange
-        case "green":  return .green
-        case "purple": return .purple
-        default:       return .blue
+        case "red": return .red
+        default: return .teal
         }
     }
 
@@ -33,10 +31,8 @@ class Category {
 
     private static func colorName(for color: Color) -> String {
         if color == .red    { return "red" }
-        if color == .yellow { return "yellow" }
         if color == .orange { return "orange" }
-        if color == .green  { return "green" }
-        if color == .purple { return "purple" }
-        return "blue"
+        if color == .teal { return "teal" }
+        return "teal"
     }
 }
