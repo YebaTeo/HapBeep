@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Haptics1: View {
+struct CriticalAlertInfoView: View {
     var body: some View {
         VStack{
             VStack{
@@ -45,7 +45,7 @@ struct Haptics1: View {
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
                 NavigationLink("Continue") {
-                    Haptics2()
+                    CautionAlertInfoView()
                 }
                 .buttonStyle(.glass)
             }
@@ -55,6 +55,6 @@ struct Haptics1: View {
 
 #Preview {
     NavigationStack {
-        Haptics1()
+        CriticalAlertInfoView()
     }
 }

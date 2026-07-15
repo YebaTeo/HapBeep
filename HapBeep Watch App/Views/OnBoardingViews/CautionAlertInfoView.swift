@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct Haptics2: View {
+struct CautionAlertInfoView: View {
     var body: some View {
         VStack {
             VStack{
@@ -46,7 +46,7 @@ struct Haptics2: View {
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
                 NavigationLink("Continue") {
-                    Haptics3()
+                    InformationAlertInfoView()
                 }
                 .buttonStyle(.glass)
             }
@@ -56,6 +56,6 @@ struct Haptics2: View {
 
 #Preview {
     NavigationStack {
-        Haptics2()
+        CautionAlertInfoView()
     }
 }

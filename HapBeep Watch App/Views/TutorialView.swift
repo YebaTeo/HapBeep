@@ -11,9 +11,9 @@ struct TutorialView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 32) {
-                Haptics1()
-                Haptics2()
-                Haptics3()
+                CriticalAlertInfoView()
+                CautionAlertInfoView()
+                InformationAlertInfoView()
             }
         }
         .toolbar(.hidden, for: .bottomBar)

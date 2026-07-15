@@ -15,7 +15,7 @@ struct HapBeep_Watch_AppApp: App {
                     }
                 } else {
                     NavigationStack {
-                        OnBoardingView()
+                        OnBoardingWelcomeView()
                     }
                 }
             }

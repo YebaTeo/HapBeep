@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct OnBoardingView: View {
+struct OnBoardingWelcomeView: View {
     @AppStorage("hasCompletedOnBoarding")
     private var hasCompletedOnBoarding: Bool = false
     
@@ -29,7 +29,7 @@ struct OnBoardingView: View {
             .padding(.bottom, 28)
             
             NavigationLink("Learn our haptics") {
-               Haptics1()
+               CriticalAlertInfoView()
             }
             .buttonStyle(.glassProminent)
             .tint(.blue)
@@ -44,6 +44,6 @@ struct OnBoardingView: View {
 
 #Preview {
     NavigationStack {
-        OnBoardingView()
+        OnBoardingWelcomeView()
     }
 }

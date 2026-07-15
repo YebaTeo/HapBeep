@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct OnBoarding5View: View {
+struct OnBoardingCompletionView: View {
     @AppStorage("hasCompletedOnBoarding")
     private var hasCompletedOnBoarding: Bool = false
     
@@ -44,6 +44,6 @@ struct OnBoarding5View: View {
 
 #Preview {
     NavigationStack {
-        OnBoarding5View()
+        OnBoardingCompletionView()
     }
 }
