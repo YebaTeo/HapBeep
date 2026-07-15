@@ -24,7 +24,7 @@ struct Haptics3: View {
         .padding(.vertical, 20)
         
         HStack (spacing: 15) {
-            Image("IconHonkCar")
+            Image("IconDashboardSound")
                 .resizable()
                 .scaledToFill()
                 .frame(width: 40, height: 40)
