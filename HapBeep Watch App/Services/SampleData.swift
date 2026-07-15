@@ -32,8 +32,8 @@ class SampleData {
     
     private func insertSampleData() {
         // Inserting categories
-        let informational = Category(name: "Information", severity: 0, color: .blue, hapticPattern: .information)
-        let caution = Category(name: "Caution", severity: 1, color: .yellow, hapticPattern: .caution)
+        let informational = Category(name: "Information", severity: 0, color: .teal, hapticPattern: .information)
+        let caution = Category(name: "Caution", severity: 1, color: .orange, hapticPattern: .caution)
         let critical = Category(name: "Critical", severity: 2, color: .red, hapticPattern: .critical)
         
         context.insert(informational)
