@@ -112,19 +112,13 @@ struct ContentView: View {
                     }
                 }
             }
-            .task {
-                    guard !sounds.isEmpty else { return }
-
-                    activeSound = sounds[selectedIndex]
-
+            .onChange(of: isStartingDrivingMode) { isActive in
+                if isActive {
                     try? classifier.start()
-                    print(activeSound?.name ?? "nil")
-
-                    selectedIndex = (selectedIndex + 1) % sounds.count
-                    
-                player.play(activeSound?.category.hapticPattern ?? .caution)
-                    
-                
+                } else {
+                    classifier.stop()
+                    classifier.detectedSound = nil
+                }
             }
             .onChange(of: classifier.detectedSound) { detected in
                 guard let detected else { return }
