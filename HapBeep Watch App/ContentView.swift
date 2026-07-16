@@ -156,8 +156,8 @@ struct ContentView: View {
                 }
             }
         }
-        .onChange(of: isStartingDrivingMode) { isActive in
-            if isActive {
+        .onChange(of: systemState) { state in
+            if state == .drivingOn {
                 try? classifier.start()
             } else {
                 classifier.stop()
