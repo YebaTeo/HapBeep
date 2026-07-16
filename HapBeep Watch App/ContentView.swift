@@ -62,7 +62,7 @@ struct ContentView: View {
                         if let sound = activeSound {
                             Image(systemName: sound.icon)
                                 .font(.largeTitle)
-                                .foregroundStyle(.accentColor)
+                                .foregroundStyle(Color.accentColor)
                         } else {
                             Image(systemName: "car.front.waves.left.and.right.and.up.fill")
                                 .font(.system(.title))
@@ -120,7 +120,7 @@ struct ContentView: View {
                 }
             }
         }
-        .onChange(of: systemState) { state in
+        .onChange(of: systemState) { _, state in
             if state == .drivingOn {
                 try? classifier.start()
             } else {
@@ -128,16 +128,11 @@ struct ContentView: View {
                 classifier.detectedSound = nil
             }
         }
-        .onChange(of: classifier.detectedSound) { detected in
+        .onChange(of: classifier.detectedSound) { _, detected in
             guard let detected else { return }
-            let pattern = RoadPattern.pattern(for: detected)
-            player.play(pattern)
-            activeSound = sounds.first(where: { $0.name == detected })
-            if let category = categories.first(where: { $0.severity == pattern.priority / 50 }) {
-                currentBackgroundColor = category.color
-            }
+            handleDetectedSound(detected)
         }
-        .onChange(of: player.isPlaying) { isPlaying in
+        .onChange(of: player.isPlaying) { _, isPlaying in
             if !isPlaying {
                 currentBackgroundColor = .primaryDarkBlue
                 classifier.detectedSound = nil
@@ -156,7 +151,8 @@ struct ContentView: View {
             
             countdown -= 1
             if countdown <= totalCountdown {
-                progress = Double(totalCountdown - countdown) / Double(totalCountdown)
+                let diff: Int = totalCountdown - countdown
+                progress = Double(diff) / Double(totalCountdown)
             }
         }
         .sheet(isPresented: $isSettingsVisible) {
@@ -166,6 +162,17 @@ struct ContentView: View {
             TutorialView()
         }
     }
+    private func handleDetectedSound(_ detected: String) {
+        let pattern = RoadPattern.pattern(for: detected)
+        player.play(pattern)
+        let matchedSound: Sound? = sounds.first { $0.name == detected }
+        activeSound = matchedSound
+        let targetSeverity: Int = pattern.priority / 50
+        if let category = categories.first(where: { $0.severity == targetSeverity }) {
+            currentBackgroundColor = category.color
+        }
+    }
+
     func startDrivingMode() {
         systemState = .starting
     }
