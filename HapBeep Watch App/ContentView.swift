@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Combine
 
 struct ContentView: View {
     @State private var isStartingDrivingMode: Bool = false
@@ -17,6 +18,11 @@ struct ContentView: View {
     @State private var classifier = SystemAudioClassifier()
     
     @State private var currentBackgroundColor: Color = .primaryDarkBlue
+    
+    @State private var systemState: SystemState = .drivingOff
+    @State private var progress: CGFloat = 0.0
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let totalCountdown = 5
     
     private var activeSoundName: String {
         if !isStartingDrivingMode || countdown >= 0 {
@@ -48,18 +54,14 @@ struct ContentView: View {
             .ignoresSafeArea()
             
             VStack {
-                if !isStartingDrivingMode {
+                if systemState == .drivingOff {
                     LabeledImage(
                         icon: "car",
                         text: "Driving Mode: Off"
                     )
-                    
-//                    IconButton(icon: "play.fill") {
-//                        isStartingDrivingMode = true
-//                    }
-//                    .padding(.top, 16)
-                }
-                else if countdown < 0 {
+                } else if systemState == .starting {
+                    CircularProgressView(countdown: $countdown, progress: $progress)
+                } else {
                     VStack {
                         if let sound = activeSound {
                             Image(sound.icon)
@@ -75,20 +77,46 @@ struct ContentView: View {
                             .font(.title3.bold())
                             .padding(.top, 4)
                     }
-                    
-//                    IconButton(icon: "stop.fill") {
-//                        isStartingDrivingMode = false
-//                        countdown = 5
-//                        activeSound  = nil
-//                    }
-//                    .padding(.top, 16)
-                } else {
-                    CircularProgressView(countdown: $countdown)
                 }
+                
+//                if !isStartingDrivingMode {
+//
+//                    
+////                    IconButton(icon: "play.fill") {
+////                        isStartingDrivingMode = true
+////                    }
+////                    .padding(.top, 16)
+//                }
+//                else if countdown < 0 {
+//                    VStack {
+//                        if let sound = activeSound {
+//                            Image(sound.icon)
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(width: 80, height: 80)
+//                        } else {
+//                            Image(systemName: "car.front.waves.left.and.right.and.up.fill")
+//                                .font(.system(.title))
+//                                .foregroundColor(.accentColor)
+//                        }
+//                        Text(activeSoundName)
+//                            .font(.title3.bold())
+//                            .padding(.top, 4)
+//                    }
+//                    
+////                    IconButton(icon: "stop.fill") {
+////                        isStartingDrivingMode = false
+////                        countdown = 5
+////                        activeSound  = nil
+////                    }
+////                    .padding(.top, 16)
+//                } else {
+//                    CircularProgressView(countdown: $countdown)
+//                }
             }
         }
         .toolbar {
-            if countdown > -1 && isStartingDrivingMode {
+            if systemState == .starting {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         isStartingDrivingMode = false
@@ -97,7 +125,9 @@ struct ContentView: View {
                             .foregroundStyle(.red)
                     }
                 }
-            } else if !isStartingDrivingMode {
+            }
+            
+            if systemState == .drivingOff {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         isTutorialVisible = true
@@ -115,12 +145,14 @@ struct ContentView: View {
                 }
             }
             
-            ToolbarItem(placement: .bottomBar) {
-                IconButton(icon: isDriving ? "stop.fill" : "play.fill") {
-                    if isDriving {
-                        stopDrivingMode()
-                    } else {
-                        startDrivingMode()
+            if systemState != .starting {
+                ToolbarItem(placement: .bottomBar) {
+                    IconButton(icon: isDriving ? "stop.fill" : "play.fill") {
+                        if isDriving {
+                            stopDrivingMode()
+                        } else {
+                            startDrivingMode()
+                        }
                     }
                 }
             }
@@ -149,6 +181,17 @@ struct ContentView: View {
                 activeSound = nil
             }
         }
+        .onReceive(timer) { _ in
+            guard countdown >= -1 else {
+                systemState = .drivingOn
+                return
+            }
+            countdown -= 1
+
+            if countdown <= totalCountdown {
+                progress = Double(totalCountdown - countdown) / Double(totalCountdown)
+            }
+        }
         .sheet(isPresented: $isSettingsVisible) {
             SettingsView()
         }
@@ -159,13 +202,23 @@ struct ContentView: View {
     
     func startDrivingMode() {
         isStartingDrivingMode = true
+        
+        systemState = .starting
     }
     
     func stopDrivingMode() {
         isStartingDrivingMode = false
         countdown = 5
         activeSound  = nil
+        
+        systemState = .drivingOff
     }
+}
+
+enum SystemState {
+    case drivingOn
+    case drivingOff
+    case starting
 }
 
 #Preview {

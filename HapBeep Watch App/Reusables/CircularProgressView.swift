@@ -3,12 +3,7 @@ import Combine
 
 struct CircularProgressView: View {
     @Binding var countdown: Int
-    @State private var progress = 0.0
-
-    let totalCountdown = 3
-
-    let timer = Timer.publish(every: 1, on: .main, in: .common)
-        .autoconnect()
+    @Binding var progress: CGFloat
 
     var body: some View {
         ZStack {
@@ -38,18 +33,9 @@ struct CircularProgressView: View {
                     .opacity(progress)
             }
         }
-        .onReceive(timer) { _ in
-            guard countdown >= -1 else { return }
-
-            countdown -= 1
-
-            if countdown <= totalCountdown {
-                progress = Double(totalCountdown - countdown) / Double(totalCountdown)
-            }
-        }
     }
 }
 
 #Preview {
-    CircularProgressView(countdown: .constant(5))
+    CircularProgressView(countdown: .constant(5), progress: .constant(0.0))
 }
