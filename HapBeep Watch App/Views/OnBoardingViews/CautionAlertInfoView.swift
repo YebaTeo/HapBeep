@@ -26,20 +26,17 @@ struct CautionAlertInfoView: View {
                 .padding(.bottom, 10)
                 
                 HStack (spacing: 12) {
-                    Image("IconHonkCar")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
+                    Image(systemName: "horn.blast")
+                        .font(.title2)
+                        .foregroundStyle(.orange)
                     
-                    Image("IconHonkMotorcycle")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
+                    Image(systemName: "car.2.fill")
+                        .font(.title2)
+                        .foregroundStyle(.orange)
                     
-                    Image("IconTireScreeching")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
+                    Image(systemName: "car.rear.and.tire.marks")
+                        .font(.title2)
+                        .foregroundStyle(.orange)
                 }
                 
                 Spacer()

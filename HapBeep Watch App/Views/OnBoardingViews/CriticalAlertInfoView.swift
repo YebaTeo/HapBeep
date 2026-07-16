@@ -1,11 +1,5 @@
-//
-//  Haptics1.swift
-//  HapBeep Watch App
-//
-//  Created by Michelle Intan Handa on 15/07/26.
-//
-
 import SwiftUI
+import SwiftData
 
 struct CriticalAlertInfoView: View {
     var body: some View {
@@ -26,18 +20,9 @@ struct CriticalAlertInfoView: View {
                 .padding(.bottom, 10)
                 
                 HStack (spacing: 12) {
-                    Image("IconMetalRattling")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
-                    Image("IconSirens")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
-                    Image("IconTireFlat")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
+                    Image(systemName: "light.beacon.max.fill")
+                        .font(.title2)
+                        .foregroundStyle(.red)
                 }
                 
                 Spacer()

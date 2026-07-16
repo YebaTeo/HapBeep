@@ -16,30 +16,23 @@ struct InformationAlertInfoView: View {
                     Text("Information")
                         .font(.subheadline)
                         .fontWeight(.bold)
-                        .foregroundStyle(.mint)
+                        .foregroundStyle(.teal)
                     
                     Text("Check your dashboard for system alerts")
                         .font(.caption)
-                        .foregroundStyle(.mint)
+                        .foregroundStyle(.teal)
                         .multilineTextAlignment(.center)
                 }
                 .padding(.bottom, 16)
                 
                 HStack (spacing: 15) {
-                    Image("IconDashboardSound")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
+                    Image(systemName: "car.top.radiowaves.rear")
+                        .font(.title2)
+                        .foregroundStyle(.teal)
                     
-                    Image("IconKnocking")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
-                    
-                    Image("IconEngine")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
+                    Image(systemName: "car.window.right.exclamationmark")
+                        .font(.title2)
+                        .foregroundStyle(.teal)
                 }
                 
                 Spacer()
