@@ -9,19 +9,15 @@ struct HapBeep_Watch_AppApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                NavigationStack {
-                    OnBoardingWelcomeView()
+                if hasCompleteOnBoarding {
+                    NavigationStack {
+                        ContentView()
+                    }
+                } else {
+                    NavigationStack {
+                        OnBoardingWelcomeView()
+                    }
                 }
-                
-//                if hasCompleteOnBoarding {
-//                    NavigationStack {
-//                        ContentView()
-//                    }
-//                } else {
-//                    NavigationStack {
-//                        OnBoardingWelcomeView()
-//                    }
-//                }
             }
             .modelContainer(DataManager.shared.container)
         }
