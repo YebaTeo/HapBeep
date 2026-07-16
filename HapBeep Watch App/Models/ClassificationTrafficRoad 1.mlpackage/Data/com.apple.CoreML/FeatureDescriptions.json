@@ -1,0 +1,48 @@
+{
+  "Inputs" : {
+    "car_horn_conf" : {
+      "MLFeatureShortDescription" : "--"
+    },
+    "peak" : {
+      "MLFeatureShortDescription" : "--"
+    },
+    "traffic_noise_conf" : {
+      "MLFeatureShortDescription" : "--"
+    },
+    "rms" : {
+      "MLFeatureShortDescription" : "--"
+    },
+    "reverse_beeps_conf" : {
+      "MLFeatureShortDescription" : "--"
+    },
+    "zero_crossing_rate" : {
+      "MLFeatureShortDescription" : "--"
+    },
+    "vehicle_skidding_conf" : {
+      "MLFeatureShortDescription" : "--"
+    },
+    "emergency_vehicle_conf" : {
+      "MLFeatureShortDescription" : "--"
+    },
+    "knock_conf" : {
+      "MLFeatureShortDescription" : "--"
+    },
+    "duration" : {
+      "MLFeatureShortDescription" : "--"
+    }
+  },
+  "Outputs" : {
+    "label" : {
+      "MLFeatureShortDescription" : "--"
+    },
+    "labelProbability" : {
+      "MLFeatureShortDescription" : "--"
+    }
+  },
+  "TrainingInputs" : {
+
+  },
+  "States" : {
+
+  }
+}
