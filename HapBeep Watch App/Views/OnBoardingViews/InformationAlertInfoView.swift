@@ -10,7 +10,7 @@ import SwiftUI
 
 struct InformationAlertInfoView: View {
     var body: some View {
-        Group {
+        ScrollView {
             VStack {
                 VStack{
                     Text("Information")
