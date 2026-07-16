@@ -17,7 +17,7 @@ struct OnBoardingCompletionView: View {
                 .font(.largeTitle)
                 .foregroundColor(.accentColor)
             
-            VStack(spacing: 4) {
+            VStack {
                 Text("You are all set")
                     .font(.title3.bold())
                 Text("HapBeeb is ready to assist you!")
@@ -27,7 +27,7 @@ struct OnBoardingCompletionView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, 8)
-            .padding(.top, 8)
+            .padding(.top, 4)
             
             Spacer()
         }
