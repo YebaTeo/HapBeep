@@ -42,5 +42,5 @@ struct OnBoarding4View: View {
 
 #Preview {
     OnBoarding4View()
-        .modelContainer(SampleData.shared.container)
+        .modelContainer(DataManager.shared.container)
 }
