@@ -59,8 +59,8 @@ class DataManager {
             ("knock",             "Knocking",           "IconKnocking",       informational),
             ("car_horn",          "Car Horn",           "IconHonkCar",        caution),
             ("traffic_noise",     "Approaching Vehicle","IconEngine",         caution),
+            ("vehicle_skidding",  "Tire Screeching",    "IconTireScreeching", caution),
             ("emergency_vehicle", "Sirens",             "IconSirens",         critical),
-            ("vehicle_skidding",  "Vehicle Skidding",   "IconTireScreeching", critical),
         ]
         
         for data in soundData {
