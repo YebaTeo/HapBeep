@@ -182,12 +182,12 @@ struct ContentView: View {
             }
         }
         .onReceive(timer) { _ in
-            guard countdown > 0 else {
+            guard systemState == .starting else {
                 systemState = .drivingOn
                 return
             }
+            
             countdown -= 1
-
             if countdown <= totalCountdown {
                 progress = Double(totalCountdown - countdown) / Double(totalCountdown)
             }
