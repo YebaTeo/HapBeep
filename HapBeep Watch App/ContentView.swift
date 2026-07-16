@@ -19,7 +19,7 @@ struct ContentView: View {
     
     @State private var countdown = 5
     @State private var systemState: SystemState = .drivingOff
-    @State private var progress: CGFloat = 0.0
+    @State private var progress: Double = 0.0
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let totalCountdown = 5
     
@@ -62,7 +62,7 @@ struct ContentView: View {
                         if let sound = activeSound {
                             Image(systemName: sound.icon)
                                 .font(.largeTitle)
-                                .foregroundStyle(.accentColor)
+                                .foregroundStyle(sound.category.color)
                         } else {
                             Image(systemName: "car.front.waves.left.and.right.and.up.fill")
                                 .font(.system(.title))
