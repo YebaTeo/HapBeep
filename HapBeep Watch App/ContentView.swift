@@ -74,41 +74,6 @@ struct ContentView: View {
                             .padding(.top, 4)
                     }
                 }
-                
-//                if !isStartingDrivingMode {
-//
-//                    
-////                    IconButton(icon: "play.fill") {
-////                        isStartingDrivingMode = true
-////                    }
-////                    .padding(.top, 16)
-//                }
-//                else if countdown < 0 {
-//                    VStack {
-//                        if let sound = activeSound {
-//                            Image(sound.icon)
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(width: 80, height: 80)
-//                        } else {
-//                            Image(systemName: "car.front.waves.left.and.right.and.up.fill")
-//                                .font(.system(.title))
-//                                .foregroundColor(.accentColor)
-//                        }
-//                        Text(activeSoundName)
-//                            .font(.title3.bold())
-//                            .padding(.top, 4)
-//                    }
-//                    
-////                    IconButton(icon: "stop.fill") {
-////                        isStartingDrivingMode = false
-////                        countdown = 5
-////                        activeSound  = nil
-////                    }
-////                    .padding(.top, 16)
-//                } else {
-//                    CircularProgressView(countdown: $countdown)
-//                }
             }
         }
         .toolbar {
@@ -185,7 +150,7 @@ struct ContentView: View {
                 return
             }
             
-            if countdown <= 0 {
+            if countdown <= 1 {
                 systemState = .drivingOn
                 return
             }
@@ -202,7 +167,6 @@ struct ContentView: View {
             TutorialView()
         }
     }
-    
     func startDrivingMode() {
         systemState = .starting
     }
