@@ -60,10 +60,9 @@ struct ContentView: View {
                 } else {
                     VStack {
                         if let sound = activeSound {
-                            Image(sound.icon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 80, height: 80)
+                            Image(systemName: sound.icon)
+                                .font(.largeTitle)
+                                .foregroundStyle(.accentColor)
                         } else {
                             Image(systemName: "car.front.waves.left.and.right.and.up.fill")
                                 .font(.system(.title))
