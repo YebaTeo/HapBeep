@@ -15,7 +15,7 @@ final class SystemAudioClassifier: NSObject {
     private var systemRequest: SNClassifySoundRequest?
     
     // Core ML Tabular Classification Model instance
-    private var tabularModel: ClassificationTrafficRoad_1?
+    private var tabularModel: ClassificationTrafficRoad_2?
 
     // Storage for SoundAnalysis confidence values
     private var carHornConfidence: Double = 0.0
@@ -42,9 +42,9 @@ final class SystemAudioClassifier: NSObject {
     private func setupTabularModel() {
         do {
             let config = MLModelConfiguration()
-            self.tabularModel = try ClassificationTrafficRoad_1(configuration: config)
+            self.tabularModel = try ClassificationTrafficRoad_2(configuration: config)
         } catch {
-            print("❌ Failed to load Tabular Model: \(error.localizedDescription)")
+            print("Failed to load Tabular Model: \(error.localizedDescription)")
         }
     }
 
@@ -104,7 +104,7 @@ final class SystemAudioClassifier: NSObject {
         
         detectedSound = nil
 
-        print("🛑 Audio Engine Stopped")
+        print("Audio Engine Stopped")
     }
 
     private func extractAudioFeatures(from buffer: AVAudioPCMBuffer) -> AudioFeatures {
@@ -176,21 +176,34 @@ final class SystemAudioClassifier: NSObject {
                 }
             }
 
+            let modelConfidence = probabilities?[prediction.label]?.doubleValue ?? 0.0
+
+            // 🌟 VALIDATION FIX: Check for High Confidence triggers (e.g. >= 50%)
             if prediction.label == "silence" {
-                print("🛑 [Custom Tabular Inference] Silence detected, filtering out.")
-                return
+                if modelConfidence >= 0.60 {
+                    print("[Custom Tabular Inference] Silence verified with high confidence (\(String(format: "%.3f", modelConfidence))), filtering out intentional UI changes.")
+                    Task { @MainActor in
+                        self.detectedSound = nil // Reset UI state safely since it's confirmed background noise
+                    }
+                    return
+                } else {
+                    print("[Custom Tabular Inference] Tabular predicted 'silence' but confidence was weak (\(String(format: "%.3f", modelConfidence))). Deferring to Apple results.")
+                    return
+                }
             }
 
-            let modelConfidence = probabilities?[prediction.label]?.doubleValue ?? 0.0
-            print("✅ [Custom Tabular Inference] Accepted Trigger -> output: \(prediction.label) with confidence \(String(format: "%.3f", modelConfidence))")
-
-            // ✅ Core ML Custom model matches successfully (e.g., "car_crash"), update the UI state!
-            Task { @MainActor in
-                self.detectedSound = prediction.label
+            // If it's a meaningful structural flag (like car_crash), require high accuracy thresholds
+            if modelConfidence >= 0.50 {
+                print("[Custom Tabular Inference] Accepted Trigger -> output: \(prediction.label) with confidence \(String(format: "%.3f", modelConfidence))")
+                Task { @MainActor in
+                    self.detectedSound = prediction.label
+                }
+            } else {
+                print("[Custom Tabular Inference] Detected '\(prediction.label)' but dropped it due to low confidence (\(String(format: "%.3f", modelConfidence)))")
             }
             
         } catch {
-            print("❌ Tabular CoreML Prediction Failed: \(error.localizedDescription)")
+            print("Tabular CoreML Prediction Failed: \(error.localizedDescription)")
         }
     }
 }
@@ -221,7 +234,7 @@ extension SystemAudioClassifier: SNResultsObserving {
             }
         }
 
-        print("🍎 [Apple SoundAnalysis .version1] Extracting confidences:")
+        print("[Apple SoundAnalysis .version1] Extracting confidences:")
         print("   • car_horn: \(String(format: "%.3f", currentCarHorn))")
         print("   • traffic_noise: \(String(format: "%.3f", currentTrafficNoise))")
         print("   • vehicle_skidding: \(String(format: "%.3f", currentVehicleSkidding))")
@@ -240,7 +253,7 @@ extension SystemAudioClassifier: SNResultsObserving {
         
         // Output clean intentional events immediately if they surpass standard certainty
         if let topAppleEvent = confidenceMap.max(by: { $0.value < $1.value }), topAppleEvent.value > 0.40 {
-            print("🎯 [Apple Stream Parser] High confidence intentional event matched: \(topAppleEvent.key) (\(topAppleEvent.value))")
+            print("[Apple Stream Parser] High confidence intentional event matched: \(topAppleEvent.key) (\(topAppleEvent.value))")
             Task { @MainActor in
                 self.detectedSound = topAppleEvent.key
             }

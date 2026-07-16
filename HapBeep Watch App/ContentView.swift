@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 import Combine
 
-
 struct ContentView: View {
     @State var isSettingsVisible: Bool = false
     @State var isTutorialVisible: Bool = false
@@ -173,14 +172,19 @@ struct ContentView: View {
         if let matched = matchedSound {
             print("🎉 Match Found! Updating UI State to Display Name: \(matched.displayName)")
             activeSound = matched
+            
+            // ✅ FIX: Inherit the background color directly from the database category configuration
+            print("🎨 Updating screen background color to category color asset map target: \(matched.category.name)")
+            currentBackgroundColor = matched.category.color
         } else {
             print("⚠️ Match Failed! '\(detected)' doesn't exist inside the active sounds database array.")
             print("   Available database labels were: \(sounds.map { $0.name })")
-        }
-        
-        let targetSeverity: Int = pattern.priority / 50
-        if let category = categories.first(where: { $0.severity == targetSeverity }) {
-            currentBackgroundColor = category.color
+            
+            // Fallback strategy if database structure breaks:
+            let targetSeverity: Int = pattern.priority / 50
+            if let category = categories.first(where: { $0.severity == targetSeverity }) {
+                currentBackgroundColor = category.color
+            }
         }
     }
 
@@ -196,6 +200,7 @@ struct ContentView: View {
         progress = 0.0
     }
 }
+
 enum SystemState {
     case drivingOn
     case drivingOff

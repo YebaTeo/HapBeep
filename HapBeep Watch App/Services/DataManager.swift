@@ -2,7 +2,6 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-
 class DataManager {
     static let shared = DataManager()
     let container: ModelContainer
@@ -36,19 +35,20 @@ class DataManager {
         let existingSounds = (try? context.fetch(soundDescriptor)) ?? []
         let existingCount = (try? context.fetchCount(categoryDescriptor)) ?? 0
 
-        // Check if the store is missing the newly added "car_crash" type
-        let containsCarCrash = existingSounds.contains { $0.name == "car_crash" }
+        // ✅ Verify that both targeted parameters exist AND are explicitly assigned to Critical (severity: 2)
+        let hasCriticalCrash = existingSounds.contains { $0.name == "car_crash" && $0.category.severity == 2 }
+        let hasCriticalMachine = existingSounds.contains { $0.name == "machine_faulty" && $0.category.severity == 2 }
 
         if existingCount > 0 {
             let firstSound = existingSounds.first
-            // If displayName is empty or we are missing the car_crash entry — wipe it for a fresh build
-            if firstSound?.displayName.isEmpty == true || !containsCarCrash {
-                print("🔄 Updating database records to register missing sound entries...")
+            // Wipes the cache if parameters are missing or mapped to Caution by mistake
+            if firstSound?.displayName.isEmpty == true || !hasCriticalCrash || !hasCriticalMachine {
+                print("🔄 Structural change found! Resetting SwiftData storage context...")
                 existingSounds.forEach { context.delete($0) }
                 (try? context.fetch(categoryDescriptor))?.forEach { context.delete($0) }
                 try? context.save()
             } else {
-                return // Database is already current
+                return // Cache is updated
             }
         }
         
@@ -69,8 +69,10 @@ class DataManager {
             ("traffic_noise",     "Approaching Vehicle","car.2.fill",         caution),
             ("vehicle_skidding",  "Tire Screeching",    "car.rear.and.tire.marks", caution),
             ("emergency_vehicle", "Sirens",             "light.beacon.max.fill", critical),
-            // ✅ REGISTERING CAR CRASH IN CAUTION CATEGORY
-            ("car_crash",         "Car Crash Detected", "exclamationmark.triangle.fill",  caution)
+            
+            // 🔥 FIXED: Mapped explicitly to critical category rows
+            ("car_crash",         "Car Crash Detected", "exclamationmark.triangle.fill",  critical),
+            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver.fill",    critical)
         ]
         
         for data in soundData {
@@ -80,7 +82,7 @@ class DataManager {
         
         do {
             try context.save()
-            print("🚀 Successfully populated database with all standard event identifiers.")
+            print("🚀 Successfully updated model instances inside database layer context records.")
         } catch {
             print("Failed to insert sample data: \(error)")
         }
