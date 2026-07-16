@@ -150,7 +150,7 @@ struct ContentView: View {
                 return
             }
             
-            if countdown <= 1 {
+            if countdown < 1 {
                 systemState = .drivingOn
                 return
             }
