@@ -33,6 +33,10 @@ struct ContentView: View {
         return activeSound?.name ?? "car"
     }
     
+    private var isDriving: Bool {
+        return isStartingDrivingMode && countdown <= 0
+    }
+    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -50,10 +54,10 @@ struct ContentView: View {
                         text: "Driving Mode: Off"
                     )
                     
-                    IconButton(icon: "play.fill") {
-                        isStartingDrivingMode = true
-                    }
-                    .padding(.top, 16)
+//                    IconButton(icon: "play.fill") {
+//                        isStartingDrivingMode = true
+//                    }
+//                    .padding(.top, 16)
                 }
                 else if countdown < 0 {
                     VStack {
@@ -72,12 +76,12 @@ struct ContentView: View {
                             .padding(.top, 4)
                     }
                     
-                    IconButton(icon: "stop.fill") {
-                        isStartingDrivingMode = false
-                        countdown = 5
-                        activeSound  = nil
-                    }
-                    .padding(.top, 16)
+//                    IconButton(icon: "stop.fill") {
+//                        isStartingDrivingMode = false
+//                        countdown = 5
+//                        activeSound  = nil
+//                    }
+//                    .padding(.top, 16)
                 } else {
                     CircularProgressView(countdown: $countdown)
                 }
@@ -107,6 +111,16 @@ struct ContentView: View {
                         isSettingsVisible = true
                     } label: {
                         Image(systemName: "gear")
+                    }
+                }
+            }
+            
+            ToolbarItem(placement: .bottomBar) {
+                IconButton(icon: isDriving ? "stop.fill" : "play.fill") {
+                    if isDriving {
+                        stopDrivingMode()
+                    } else {
+                        startDrivingMode()
                     }
                 }
             }
@@ -141,6 +155,16 @@ struct ContentView: View {
         .sheet(isPresented: $isTutorialVisible) {
             TutorialView()
         }
+    }
+    
+    func startDrivingMode() {
+        isStartingDrivingMode = true
+    }
+    
+    func stopDrivingMode() {
+        isStartingDrivingMode = false
+        countdown = 5
+        activeSound  = nil
     }
 }
 
