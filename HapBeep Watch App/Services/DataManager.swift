@@ -32,10 +32,16 @@ class DataManager {
     
     private func insertSampleData() {
         let categoryDescriptor = FetchDescriptor<Category>()
-            let existingCount = (try? context.fetchCount(categoryDescriptor)) ?? 0
-            
-        guard existingCount == 0 else {
-            return
+        let soundDescriptor = FetchDescriptor<Sound>()
+        let existingCount = (try? context.fetchCount(categoryDescriptor)) ?? 0
+
+        if existingCount > 0 {
+            let firstSound = try? context.fetch(soundDescriptor).first
+            // If displayName is empty the store has old pre-migration data — wipe it
+            guard firstSound?.displayName.isEmpty == true else { return }
+            (try? context.fetch(soundDescriptor))?.forEach { context.delete($0) }
+            (try? context.fetch(categoryDescriptor))?.forEach { context.delete($0) }
+            try? context.save()
         }
         
         // Inserting categories
@@ -47,39 +53,18 @@ class DataManager {
         context.insert(caution)
         context.insert(critical)
         
-        // Inserting informational sounds
-        let informationalSounds = [
-            "Parking Sensor",
-            "Knocking",
+        // (name: internal identifier, displayName: shown in UI, icon: asset name)
+        let soundData: [(name: String, displayName: String, icon: String, category: Category)] = [
+            ("reverse_beeps",     "Parking Sensor",     "IconDashboardSound", informational),
+            ("knock",             "Knocking",           "IconKnocking",       informational),
+            ("car_horn",          "Car Horn",           "IconHonkCar",        caution),
+            ("traffic_noise",     "Approaching Vehicle","IconEngine",         caution),
+            ("emergency_vehicle", "Sirens",             "IconSirens",         critical),
+            ("vehicle_skidding",  "Vehicle Skidding",   "IconTireScreeching", critical),
         ]
         
-        for sound in informationalSounds {
-            let sound = Sound(name: sound, category: informational)
-            context.insert(sound)
-        }
-        
-        // Inserting caution sounds
-        let cautionSounds: [String] = [
-            "Horns",
-            "Approaching Vehicle",
-        ]
-        
-        for sound in cautionSounds {
-            let sound = Sound(name: sound, category: caution)
-            context.insert(sound)
-        }
-        
-        // Inserting critical sounds
-        let criticalSounds: [String] = [
-            "Sirens",
-            "Nearby Crash",
-            "Flat Tire",
-            "Tire Screeching",
-            "Metal Rattling"
-        ]
-        
-        for sound in criticalSounds {
-            let sound = Sound(name: sound, category: critical)
+        for data in soundData {
+            let sound = Sound(name: data.name, displayName: data.displayName, icon: data.icon, category: data.category)
             context.insert(sound)
         }
         

@@ -19,13 +19,10 @@ struct ContentView: View {
     @State private var currentBackgroundColor: Color = .primaryDarkBlue
     
     private var activeSoundName: String {
-        if !isStartingDrivingMode || countdown >= 0{
+        if !isStartingDrivingMode || countdown >= 0 {
             return "Driving Mode: ON"
         }
-        if let detectedSound = classifier.detectedSound {
-            return detectedSound
-        }
-        return activeSound?.name ?? "Driving Mode: ON"
+        return activeSound?.displayName ?? "Listening..."
     }
     
     private var activeSoundImage: String {
@@ -59,10 +56,21 @@ struct ContentView: View {
                     .padding(.top, 16)
                 }
                 else if countdown < 0 {
-                    LabeledImage(
-                        icon: "car.front.waves.left.and.right.and.up.fill",
-                        text: activeSoundName
-                    )
+                    VStack {
+                        if let sound = activeSound {
+                            Image(sound.icon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                        } else {
+                            Image(systemName: "car.front.waves.left.and.right.and.up.fill")
+                                .font(.system(.title))
+                                .foregroundColor(.accentColor)
+                        }
+                        Text(activeSoundName)
+                            .font(.title3.bold())
+                            .padding(.top, 4)
+                    }
                     
                     IconButton(icon: "stop.fill") {
                         isStartingDrivingMode = false
@@ -115,7 +123,7 @@ struct ContentView: View {
             guard let detected else { return }
             let pattern = RoadPattern.pattern(for: detected)
             player.play(pattern)
-            // priority 0 → severity 0, 50 → 1, 100 → 2
+            activeSound = sounds.first(where: { $0.name == detected })
             if let category = categories.first(where: { $0.severity == pattern.priority / 50 }) {
                 currentBackgroundColor = category.color
             }
@@ -124,6 +132,7 @@ struct ContentView: View {
             if !isPlaying {
                 currentBackgroundColor = .primaryDarkBlue
                 classifier.detectedSound = nil
+                activeSound = nil
             }
         }
         .sheet(isPresented: $isSettingsVisible) {
