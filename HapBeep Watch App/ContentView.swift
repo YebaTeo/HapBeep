@@ -25,22 +25,19 @@ struct ContentView: View {
     let totalCountdown = 5
     
     private var activeSoundName: String {
-        if !isStartingDrivingMode || countdown >= 0 {
+        if systemState == .drivingOff {
             return "Driving Mode: ON"
         }
+        
         return activeSound?.displayName ?? "Listening..."
     }
     
     private var activeSoundImage: String {
-        if !isStartingDrivingMode || countdown >= 0 {
+        if systemState == .drivingOff {
             return "car.fill"
         }
         //change after db update
         return activeSound?.name ?? "car"
-    }
-    
-    private var isDriving: Bool {
-        return isStartingDrivingMode && countdown <= 0
     }
     
     var body: some View {
@@ -119,7 +116,8 @@ struct ContentView: View {
             if systemState == .starting {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        isStartingDrivingMode = false
+                        //isStartingDrivingMode = false
+                        stopDrivingMode()
                     } label: {
                         Image(systemName: "xmark")
                             .foregroundStyle(.red)
@@ -147,10 +145,12 @@ struct ContentView: View {
             
             if systemState != .starting {
                 ToolbarItem(placement: .bottomBar) {
-                    IconButton(icon: isDriving ? "stop.fill" : "play.fill") {
-                        if isDriving {
+                    if systemState == .drivingOn {
+                        IconButton(icon: "stop.fill") {
                             stopDrivingMode()
-                        } else {
+                        }
+                    } else {
+                        IconButton(icon: "play.fill") {
                             startDrivingMode()
                         }
                     }
@@ -212,6 +212,7 @@ struct ContentView: View {
         activeSound  = nil
         
         systemState = .drivingOff
+        progress = 0.0
     }
 }
 
