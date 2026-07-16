@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CriticalAlertInfoView: View {
     var body: some View {
-        Group {
+        ScrollView {
             VStack{
                 VStack{
                     Text("Critical")
@@ -23,10 +23,9 @@ struct CriticalAlertInfoView: View {
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(.bottom, 16)
+                .padding(.bottom, 10)
                 
-                
-                HStack (spacing: 15) {
+                HStack (spacing: 12) {
                     Image("IconMetalRattling")
                         .resizable()
                         .scaledToFill()

@@ -12,7 +12,7 @@ struct OnBoardingCompletionView: View {
     private var hasCompletedOnBoarding: Bool = false
     
     var body: some View {
-        VStack {
+        ScrollView {
             Image(systemName: "checkmark.circle.fill")
                 .font(.largeTitle)
                 .foregroundColor(.accentColor)

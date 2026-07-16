@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CautionAlertInfoView: View {
     var body: some View {
-        Group {
+        ScrollView {
             VStack {
                 VStack{
                     Text("Caution")
@@ -23,9 +23,9 @@ struct CautionAlertInfoView: View {
                         .foregroundStyle(.orange)
                         .multilineTextAlignment(.center)
                 }
-                .padding(.bottom, 16)
+                .padding(.bottom, 10)
                 
-                HStack (spacing: 15) {
+                HStack (spacing: 12) {
                     Image("IconHonkCar")
                         .resizable()
                         .scaledToFill()
