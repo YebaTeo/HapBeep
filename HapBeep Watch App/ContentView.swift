@@ -3,9 +3,7 @@ import SwiftData
 import Combine
 
 struct ContentView: View {
-    @State private var isStartingDrivingMode: Bool = false
-    @State private var countdown = 5
-//    let timer = Timer.publish(every: 1, on: .main, in: .common).connect()
+    //@State private var isStartingDrivingMode: Bool = false
     @State var isSettingsVisible: Bool = false
     @State var isTutorialVisible: Bool = false
     
@@ -19,6 +17,7 @@ struct ContentView: View {
     
     @State private var currentBackgroundColor: Color = .primaryDarkBlue
     
+    @State private var countdown = 5
     @State private var systemState: SystemState = .drivingOff
     @State private var progress: CGFloat = 0.0
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -183,6 +182,10 @@ struct ContentView: View {
         }
         .onReceive(timer) { _ in
             guard systemState == .starting else {
+                return
+            }
+            
+            if countdown <= 0 {
                 systemState = .drivingOn
                 return
             }
@@ -201,13 +204,10 @@ struct ContentView: View {
     }
     
     func startDrivingMode() {
-        isStartingDrivingMode = true
-        
         systemState = .starting
     }
     
     func stopDrivingMode() {
-        isStartingDrivingMode = false
         countdown = 5
         activeSound  = nil
         
