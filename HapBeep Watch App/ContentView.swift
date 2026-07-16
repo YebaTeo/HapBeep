@@ -182,7 +182,7 @@ struct ContentView: View {
             }
         }
         .onReceive(timer) { _ in
-            guard countdown >= 0 else {
+            guard countdown > 0 else {
                 systemState = .drivingOn
                 return
             }
