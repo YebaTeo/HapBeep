@@ -70,7 +70,6 @@ class DataManager {
             ("vehicle_skidding",  "Tire Screeching",    "car.rear.and.tire.marks", caution),
             ("emergency_vehicle", "Sirens",             "light.beacon.max.fill", critical),
             
-            // 🔥 FIXED: Mapped explicitly to critical category rows
             ("car_crash",         "Car Crash Detected", "exclamationmark.triangle.fill",  critical),
             ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver.fill",    critical)
         ]
@@ -82,7 +81,7 @@ class DataManager {
         
         do {
             try context.save()
-            print("🚀 Successfully updated model instances inside database layer context records.")
+            print("Successfully updated model instances inside database layer context records.")
         } catch {
             print("Failed to insert sample data: \(error)")
         }

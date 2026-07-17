@@ -82,7 +82,7 @@ final class SystemAudioClassifier: NSObject {
         audioEngine.prepare()
         try audioEngine.start()
 
-        print("🎤 Audio Engine Started")
+        print("Audio Engine Started")
     }
 
     func stop() {
@@ -171,35 +171,35 @@ final class SystemAudioClassifier: NSObject {
             if let probabilities = probabilities {
                 for (label, conf) in probabilities {
                     if let labelString = label as? String, let confDouble = conf as? Double {
-                        print("   • \(labelString): \(String(format: "%.3f", confDouble))")
+                        print(" • \(labelString): \(String(format: "%.3f", confDouble))")
                     }
                 }
             }
 
             let modelConfidence = probabilities?[prediction.label]?.doubleValue ?? 0.0
+            let isCustomTargetLabel = prediction.label == "car_crash" || prediction.label == "machine_faulty"
 
-            // 🌟 VALIDATION FIX: Check for High Confidence triggers (e.g. >= 50%)
+            // 🌟 FIXED LOGIC LAYER: Handle clear confirmation parameters
             if prediction.label == "silence" {
-                if modelConfidence >= 0.60 {
-                    print("[Custom Tabular Inference] Silence verified with high confidence (\(String(format: "%.3f", modelConfidence))), filtering out intentional UI changes.")
+                if modelConfidence >= 0.80 {
+                    print("[Custom Tabular Inference] Silence verified with high confidence (\(String(format: "%.3f", modelConfidence))), clearing background noises safely.")
                     Task { @MainActor in
-                        self.detectedSound = nil // Reset UI state safely since it's confirmed background noise
+                        self.detectedSound = nil
                     }
-                    return
                 } else {
-                    print("[Custom Tabular Inference] Tabular predicted 'silence' but confidence was weak (\(String(format: "%.3f", modelConfidence))). Deferring to Apple results.")
-                    return
+                    print("[Custom Tabular Inference] Tabular predicted 'silence' but confidence was weak (\(String(format: "%.3f", modelConfidence))). Keeping Apple state records.")
                 }
+                return
             }
 
-            // If it's a meaningful structural flag (like car_crash), require high accuracy thresholds
-            if modelConfidence >= 0.50 {
+            // 🌟 VALIDATION ENFORCEMENT: Enforce the explicit 80% confidence ceiling for custom pipeline triggers
+            if isCustomTargetLabel && modelConfidence >= 0.80 {
                 print("[Custom Tabular Inference] Accepted Trigger -> output: \(prediction.label) with confidence \(String(format: "%.3f", modelConfidence))")
                 Task { @MainActor in
                     self.detectedSound = prediction.label
                 }
             } else {
-                print("[Custom Tabular Inference] Detected '\(prediction.label)' but dropped it due to low confidence (\(String(format: "%.3f", modelConfidence)))")
+                print("[Custom Tabular Inference] Dropped '\(prediction.label)' (Confidence: \(String(format: "%.3f", modelConfidence))). Required: Custom Label >= 0.80")
             }
             
         } catch {
@@ -235,12 +235,12 @@ extension SystemAudioClassifier: SNResultsObserving {
         }
 
         print("[Apple SoundAnalysis .version1] Extracting confidences:")
-        print("   • car_horn: \(String(format: "%.3f", currentCarHorn))")
-        print("   • traffic_noise: \(String(format: "%.3f", currentTrafficNoise))")
-        print("   • vehicle_skidding: \(String(format: "%.3f", currentVehicleSkidding))")
-        print("   • reverse_beeps: \(String(format: "%.3f", currentReverseBeeps))")
-        print("   • knock: \(String(format: "%.3f", currentKnock))")
-        print("   • emergency_vehicle: \(String(format: "%.3f", currentEmergencyVehicle))")
+        print(" • car_horn: \(String(format: "%.3f", currentCarHorn))")
+        print(" • traffic_noise: \(String(format: "%.3f", currentTrafficNoise))")
+        print(" • vehicle_skidding: \(String(format: "%.3f", currentVehicleSkidding))")
+        print(" • reverse_beeps: \(String(format: "%.3f", currentReverseBeeps))")
+        print(" • knock: \(String(format: "%.3f", currentKnock))")
+        print(" • emergency_vehicle: \(String(format: "%.3f", currentEmergencyVehicle))")
 
         // Map discrete targeted sound variants
         let confidenceMap: [String: Double] = [
