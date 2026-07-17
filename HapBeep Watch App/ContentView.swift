@@ -134,7 +134,7 @@ struct ContentView: View {
         }
         .onChange(of: systemState) { _, state in
             if state == .drivingOn {
-                //try? classifier.start()
+                try? classifier.start()
             } else {
                 classifier.stop()
                 classifier.detectedSound = nil
