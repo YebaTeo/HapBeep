@@ -22,6 +22,8 @@ struct ContentView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let totalCountdown = 5
     
+    let notificationManager = NotificationManager.shared
+    
     private var activeSoundName: String {
         if systemState == .drivingOff {
             return "Driving Mode: ON"
@@ -103,7 +105,7 @@ struct ContentView: View {
                 }
             }
             
-            if systemState != .starting {
+            if systemState != .starting && activeSound == nil {
                 ToolbarItem(placement: .bottomBar) {
                     if systemState == .drivingOn {
                         IconButton(icon: "stop.fill") {
@@ -114,6 +116,15 @@ struct ContentView: View {
                             startDrivingMode()
                         }
                     }
+                }
+            }
+            
+            ToolbarItem(placement: .bottomBar) {
+                IconButton(icon: "sun.max") {
+                    notificationManager.createNotification(
+                        title: "Hello, world!",
+                        body: "Lorem ipsum dolor sit amet"
+                    )
                 }
             }
         }
@@ -205,4 +216,11 @@ enum SystemState {
     case drivingOn
     case drivingOff
     case starting
+}
+
+#Preview {
+    NavigationStack {
+        ContentView()
+            .modelContainer(DataManager.shared.container)
+    }
 }

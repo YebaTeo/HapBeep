@@ -6,6 +6,8 @@ struct HapBeep_Watch_AppApp: App {
     @AppStorage("hasCompletedOnBoarding")
     private var hasCompleteOnBoarding: Bool = false
     
+    let notificationManager = NotificationManager.shared
+    
     var body: some Scene {
         WindowGroup {
             Group {
@@ -20,6 +22,9 @@ struct HapBeep_Watch_AppApp: App {
                 }
             }
             .modelContainer(DataManager.shared.container)
+            .onAppear {
+                notificationManager.requestAuthorization()
+            }
         }
     }
 }
