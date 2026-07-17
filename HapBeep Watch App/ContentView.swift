@@ -3,7 +3,6 @@ import SwiftData
 import Combine
 
 struct ContentView: View {
-    //@State private var isStartingDrivingMode: Bool = false
     @State var isSettingsVisible: Bool = false
     @State var isTutorialVisible: Bool = false
     
@@ -35,7 +34,6 @@ struct ContentView: View {
         if systemState == .drivingOff {
             return "car.fill"
         }
-        //change after db update
         return activeSound?.name ?? "car"
     }
     
@@ -79,7 +77,6 @@ struct ContentView: View {
             if systemState == .starting {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        //isStartingDrivingMode = false
                         stopDrivingMode()
                     } label: {
                         Image(systemName: "xmark")
@@ -91,7 +88,7 @@ struct ContentView: View {
             if systemState == .drivingOff {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        isTutorialVisible = true
+                        
                     } label: {
                         Image(systemName: "questionmark")
                     }
@@ -126,10 +123,12 @@ struct ContentView: View {
             } else {
                 classifier.stop()
                 classifier.detectedSound = nil
+                activeSound = nil
             }
         }
         .onChange(of: classifier.detectedSound) { _, detected in
             guard let detected else { return }
+            print("📱 UI OnChange Triggered via Classifier: \(detected)")
             handleDetectedSound(detected)
         }
         .onChange(of: player.isPlaying) { _, isPlaying in
@@ -162,14 +161,30 @@ struct ContentView: View {
             TutorialView()
         }
     }
+    
     private func handleDetectedSound(_ detected: String) {
+        print("🔍 UI Handle Executing -> Querying SwiftData for match: \(detected)")
         let pattern = RoadPattern.pattern(for: detected)
         player.play(pattern)
+        
         let matchedSound: Sound? = sounds.first { $0.name == detected }
-        activeSound = matchedSound
-        let targetSeverity: Int = pattern.priority / 50
-        if let category = categories.first(where: { $0.severity == targetSeverity }) {
-            currentBackgroundColor = category.color
+        
+        if let matched = matchedSound {
+            print("🎉 Match Found! Updating UI State to Display Name: \(matched.displayName)")
+            activeSound = matched
+            
+            // ✅ FIX: Inherit the background color directly from the database category configuration
+            print("🎨 Updating screen background color to category color asset map target: \(matched.category.name)")
+            currentBackgroundColor = matched.category.color
+        } else {
+            print("⚠️ Match Failed! '\(detected)' doesn't exist inside the active sounds database array.")
+            print("   Available database labels were: \(sounds.map { $0.name })")
+            
+            // Fallback strategy if database structure breaks:
+            let targetSeverity: Int = pattern.priority / 50
+            if let category = categories.first(where: { $0.severity == targetSeverity }) {
+                currentBackgroundColor = category.color
+            }
         }
     }
 
@@ -190,11 +205,4 @@ enum SystemState {
     case drivingOn
     case drivingOff
     case starting
-}
-
-#Preview {
-    NavigationStack {
-        ContentView()
-            .modelContainer(DataManager.shared.container)
-    }
 }
