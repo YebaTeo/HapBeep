@@ -22,6 +22,8 @@ struct ContentView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let totalCountdown = 5
     
+    let notificationManager = NotificationManager.shared
+    
     private var activeSoundName: String {
         if systemState == .drivingOff {
             return "Driving Mode: ON"
@@ -103,7 +105,7 @@ struct ContentView: View {
                 }
             }
             
-            if systemState != .starting {
+            if systemState != .starting && activeSound == nil {
                 ToolbarItem(placement: .bottomBar) {
                     if systemState == .drivingOn {
                         IconButton(icon: "stop.fill") {
@@ -172,6 +174,7 @@ struct ContentView: View {
         if let matched = matchedSound {
             print("🎉 Match Found! Updating UI State to Display Name: \(matched.displayName)")
             activeSound = matched
+            notificationManager.createNotificationBySound(sound: matched)
             
             // ✅ FIX: Inherit the background color directly from the database category configuration
             print("🎨 Updating screen background color to category color asset map target: \(matched.category.name)")
@@ -205,4 +208,11 @@ enum SystemState {
     case drivingOn
     case drivingOff
     case starting
+}
+
+#Preview {
+    NavigationStack {
+        ContentView()
+            .modelContainer(DataManager.shared.container)
+    }
 }
