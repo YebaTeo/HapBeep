@@ -9,15 +9,17 @@ import SwiftUI
 
 struct TutorialView: View {
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                CriticalAlertInfoView()
-                CautionAlertInfoView()
-                InformationAlertInfoView()
-            }
+        TabView {
+            OnBoarding2View()
+            
+            CriticalAlertInfoView()
+                
+            CautionAlertInfoView()
+                
+            InformationAlertInfoView()
         }
         .toolbar(.hidden, for: .bottomBar)
-        .navigationTitle("Alert Types")
+        .navigationTitle("About Us")
     }
 }
 

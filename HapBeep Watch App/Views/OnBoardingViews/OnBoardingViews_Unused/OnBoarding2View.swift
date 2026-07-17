@@ -9,10 +9,7 @@ import Foundation
 import SwiftUI
 
 struct OnBoarding2View: View {
-    
-
     var body: some View {
-        
         VStack {
             Image(systemName: "waveform")
                 .foregroundStyle(.blue)
@@ -30,8 +27,6 @@ struct OnBoarding2View: View {
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        
-        
     }
 }
 
