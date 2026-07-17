@@ -118,15 +118,6 @@ struct ContentView: View {
                     }
                 }
             }
-            
-            ToolbarItem(placement: .bottomBar) {
-                IconButton(icon: "sun.max") {
-                    notificationManager.createNotification(
-                        title: "Hello, world!",
-                        body: "Lorem ipsum dolor sit amet"
-                    )
-                }
-            }
         }
         .onChange(of: systemState) { _, state in
             if state == .drivingOn {
