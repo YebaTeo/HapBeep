@@ -10,7 +10,9 @@ import SwiftUI
 struct OnBoardingCompletionView: View {
     @AppStorage("hasCompletedOnBoarding")
     private var hasCompletedOnBoarding: Bool = false
-    
+
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         ScrollView {
             Image(systemName: "checkmark.circle.fill")
@@ -30,7 +32,8 @@ struct OnBoardingCompletionView: View {
             .padding(.top, 4)
             
             Button("Get Started") {
-                            hasCompletedOnBoarding = true
+                hasCompletedOnBoarding = true
+                dismiss()
             }
             .buttonStyle(.glass)
         }
