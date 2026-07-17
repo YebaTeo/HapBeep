@@ -2,23 +2,23 @@ import SwiftUI
 
 struct CircularProgressView: View {
     @Binding var countdown: Int
-    @Binding var progress: CGFloat
-    
+    let maxCountdown: CGFloat
+        
     private var currentVisualProgress: CGFloat {
         if countdown >= 3 {
-            let maxReadyTime: CGFloat = 5.0
-            let totalReadyDuration: CGFloat = maxReadyTime - 3.0
-            let remainingReadyTime = CGFloat(countdown) - 3.0
+            return 1
             
-            return max(0, min(1, remainingReadyTime / totalReadyDuration))
+            //let totalReadyDuration: CGFloat = maxCountdown - 3.0
+            //let remainingReadyTime = CGFloat(countdown) - 3.0
+            //return max(0, min(1, remainingReadyTime / totalReadyDuration))
         } else {
-            return progress
+            let diff = Double(maxCountdown) - Double(countdown)
+            return 1 - diff / maxCountdown
         }
     }
 
     var body: some View {
         ZStack {
-
             Circle()
                 .trim(from: 0, to: currentVisualProgress)
                 .stroke(
@@ -26,15 +26,27 @@ struct CircularProgressView: View {
                     style: StrokeStyle(lineWidth: 10, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.linear(duration: 1), value: currentVisualProgress)
+                .animation(.smooth(duration: 0.75), value: currentVisualProgress)
 
                 Text(countdown >= 3 ? "Ready" : "\(countdown + 1)")
                     .font(.title2.bold())
                     .foregroundStyle(.teal)
+            
+            Circle()
+                .stroke(
+                    .teal.opacity(0.3),
+                    style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                )
         }
     }
 }
 
 #Preview {
-    CircularProgressView(countdown: .constant(3), progress: .constant(0.0))
+    @Previewable @State var countdown: Int = 5
+    let maxCountdown: CGFloat = 4.0
+    
+    CircularProgressView(
+        countdown: $countdown,
+        maxCountdown: maxCountdown
+    )
 }

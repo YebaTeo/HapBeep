@@ -16,11 +16,10 @@ struct ContentView: View {
     
     @State private var currentBackgroundColor: Color = .primaryDarkBlue
     
-    @State private var countdown = 5
+    let initialCountdown: Int = 4
+    @State private var countdown: Int = 4
     @State private var systemState: SystemState = .drivingOff
-    @State private var progress: CGFloat = 0.0
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    let totalCountdown = 5
     
     let notificationManager = NotificationManager.shared
     
@@ -56,7 +55,10 @@ struct ContentView: View {
                         text: "Driving Mode: Off"
                     )
                 } else if systemState == .starting {
-                    CircularProgressView(countdown: $countdown, progress: $progress)
+                    CircularProgressView(
+                        countdown: $countdown,
+                        maxCountdown: CGFloat(initialCountdown)
+                    )
                 } else {
                     VStack {
                         if let sound = activeSound {
@@ -132,7 +134,7 @@ struct ContentView: View {
         }
         .onChange(of: systemState) { _, state in
             if state == .drivingOn {
-                try? classifier.start()
+                //try? classifier.start()
             } else {
                 classifier.stop()
                 classifier.detectedSound = nil
@@ -162,10 +164,6 @@ struct ContentView: View {
             }
             
             countdown -= 1
-            if countdown <= totalCountdown {
-                let diff: Int = totalCountdown - countdown
-                progress = Double(diff) / Double(totalCountdown)
-            }
         }
         .sheet(isPresented: $isSettingsVisible) {
             SettingsView()
@@ -207,11 +205,9 @@ struct ContentView: View {
     }
     
     func stopDrivingMode() {
-        countdown = 5
-        activeSound  = nil
-        
+        countdown = initialCountdown
         systemState = .drivingOff
-        progress = 0.0
+        activeSound  = nil
     }
 }
 
