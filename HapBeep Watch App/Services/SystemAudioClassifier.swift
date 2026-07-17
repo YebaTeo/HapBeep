@@ -262,13 +262,11 @@ extension SystemAudioClassifier: SNResultsObserving {
             "emergency_vehicle": currentEmergencyVehicle
         ]
         
-        // 🌟 Reset the frame match verification flag before searching
         self.didAppleMatchIntentionalEvent = false
         
         if let topAppleEvent = confidenceMap.max(by: { $0.value < $1.value }), topAppleEvent.value >= 0.60 {
             print("[Apple Stream Parser] High confidence intentional event matched: \(topAppleEvent.key) (\(topAppleEvent.value))")
             
-            // 🌟 Flag that Apple successfully matched a priority sound pattern with confidence >= 60%
             self.didAppleMatchIntentionalEvent = true
             
             Task { @MainActor in
@@ -283,7 +281,6 @@ extension SystemAudioClassifier: SNResultsObserving {
         self.knockConfidence = currentKnock
         self.emergencyVehicleConfidence = currentEmergencyVehicle
 
-        // Evaluate custom inference matrices contextually
         self.runTabularPrediction(features: self.latestFeatures)
     }
 
