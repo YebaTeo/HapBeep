@@ -50,61 +50,79 @@ enum RoadPattern: String, CaseIterable, Identifiable, Codable {
         case .critical:                                  return 3
         }
     }
-
     var steps: [HapticStep] {
         switch self {
         case .information:
             return [
-                .init(haptic: .success, delayAfter: 0.35),
-                .init(haptic: .success, delayAfter: 0.35),
-                .init(haptic: .success, delayAfter: 0.0),
+                .init(haptic: .start, delayAfter: 0.35),
+                .init(haptic: .stop,  delayAfter: 0.35),
+                .init(haptic: .start, delayAfter: 0.35),
+                .init(haptic: .stop,  delayAfter: 0.0),
             ]
         case .information2:
             return [
-                .init(haptic: .success, delayAfter: 0.15),
-                .init(haptic: .success, delayAfter: 0.15),
-                .init(haptic: .success, delayAfter: 0.15),
-                .init(haptic: .success, delayAfter: 0.0),
-                
+                .init(haptic: .start, delayAfter: 0.15),
+                .init(haptic: .stop,  delayAfter: 0.15),
+                .init(haptic: .start, delayAfter: 0.15),
+                .init(haptic: .stop,  delayAfter: 0.15),
+                .init(haptic: .start, delayAfter: 0.15),
+                .init(haptic: .stop,  delayAfter: 0.15),
+                .init(haptic: .start, delayAfter: 0.15),
+                .init(haptic: .stop,  delayAfter: 0.0),
             ]
         case .information3:
             return [
-                .init(haptic: .success, delayAfter: 0.65),
-                .init(haptic: .success, delayAfter: 0.0),
+                .init(haptic: .start, delayAfter: 0.65),
+                .init(haptic: .stop,  delayAfter: 0.65),
+                .init(haptic: .start, delayAfter: 0.65),
+                .init(haptic: .stop,  delayAfter: 0.0),
             ]
         case .caution:
             return [
-                .init(haptic: .directionUp, delayAfter: 0.12),
-                .init(haptic: .directionUp, delayAfter: 0.50),
-                .init(haptic: .directionUp, delayAfter: 0.12),
-                .init(haptic: .directionUp, delayAfter: 0.0),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.50),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.50),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.0),
             ]
         case .caution2:
             return [
-                .init(haptic: .directionUp, delayAfter: 0.12),
-                .init(haptic: .directionUp, delayAfter: 0.12),
-                .init(haptic: .directionUp, delayAfter: 0.0),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.35),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.35),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.0),
             ]
         case .caution3:
             return [
-                .init(haptic: .directionUp, delayAfter: 0.40),
-                .init(haptic: .directionUp, delayAfter: 0.12),
-                .init(haptic: .directionUp, delayAfter: 0.40),
-                .init(haptic: .directionUp, delayAfter: 0.12),
-                .init(haptic: .directionUp, delayAfter: 0.12),
-                .init(haptic: .directionUp, delayAfter: 0.0),
+                .init(haptic: .success, delayAfter: 0.40),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.40),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.40),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.40),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.40),
+                .init(haptic: .success, delayAfter: 0.12),
+                .init(haptic: .success, delayAfter: 0.40),
+                .init(haptic: .success, delayAfter: 0.0),
             ]
         case .critical:
             return [
-                .init(haptic: .notification, delayAfter: 0.09),
-                .init(haptic: .notification, delayAfter: 0.09),
-                .init(haptic: .notification, delayAfter: 0.09),
-                .init(haptic: .notification, delayAfter: 0.35),
-                .init(haptic: .notification, delayAfter: 0.20),
-                .init(haptic: .notification, delayAfter: 0.20),
-                .init(haptic: .notification, delayAfter: 0.20),
-                .init(haptic: .notification, delayAfter: 0.20),
-
+                .init(haptic: .failure,      delayAfter: 0.06),
+                .init(haptic: .notification, delayAfter: 0.06),
+                .init(haptic: .failure,      delayAfter: 0.30),
+                .init(haptic: .failure,      delayAfter: 0.06),
+                .init(haptic: .notification, delayAfter: 0.30),
+                .init(haptic: .notification, delayAfter: 0.15),
+                .init(haptic: .notification, delayAfter: 0.15),
+                .init(haptic: .notification, delayAfter: 0.0),
             ]
         }
     }
