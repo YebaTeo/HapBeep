@@ -63,16 +63,16 @@ class DataManager {
         
         // (name: internal identifier, displayName: shown in UI, icon: asset name)
         let soundData: [(name: String, displayName: String, icon: String, cta: String, category: Category)] = [
-            ("reverse_beeps",     "Parking Sensor",     "car.top.radiowaves.rear", "Check your dashboard", informational),
+            ("reverse_beeps",     "Parking Sensor",     "car.top.radiowaves.rear", "Check your dashboard for system alerts", informational),
             ("knock",             "Knocking",           "car.window.right.exclamationmark",    "Check your window",   informational),
             
-            ("car_horn",          "Car Horn",           "horn.blast",    "Check your mirrors to see what's around your car",    caution),
-            ("traffic_noise",     "Approaching Vehicle","car.2.fill",    "Check your mirrors to see what's around your car",     caution),
-            ("vehicle_skidding",  "Tire Screeching",    "car.rear.and.tire.marks", "Check your mirrors to see what's around your car", caution),
+            ("car_horn",          "Car Horn",           "horn.blast",    "Check your mirrors to see what's happening around",    caution),
+            ("traffic_noise",     "Approaching Vehicle","car.2.fill",    "Check your mirrors to see what's happening around",     caution),
+            ("vehicle_skidding",  "Tire Screeching",    "car.rear.and.tire.marks", "Check your mirrors to see what's happening around", caution),
             
-            ("emergency_vehicle", "Sirens",             "light.beacon.max.fill", "Check your mirrors to see what's around your car", critical),
-            ("car_crash",         "Car Crash Detected", "exclamationmark.triangle.fill", "Pull over and check your car",  critical),
-            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver.fill", "Pull over and check your car", critical)
+            ("emergency_vehicle", "Sirens",             "light.beacon.max.fill", "Check your mirrors and pull over to give way", critical),
+            ("car_crash",         "Car Crash Detected", "exclamationmark.triangle.fill", "Pull over and inspect your vehicle",  critical),
+            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver.fill", "Pull over and inspect your vehicle", critical)
         ]
         
         for data in soundData {
