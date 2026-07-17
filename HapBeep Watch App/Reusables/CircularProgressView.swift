@@ -23,11 +23,11 @@ struct CircularProgressView: View {
                 .animation(.linear(duration: 1), value: progress)
 
             ZStack {
-                Text(countdown > 3 ? "Ready" : "\(countdown)")
+                Text(countdown > 3 ? "Ready" : "\(countdown + 1)")
                     .font(.title2.bold())
                     .foregroundStyle(.white)
 
-                Text(countdown > 3 ? "Ready" : "\(countdown)")
+                Text(countdown > 3 ? "Ready" : "\(countdown + 1)")
                     .font(.title2.bold())
                     .foregroundStyle(.primaryDarkBlue)
                     .opacity(progress)

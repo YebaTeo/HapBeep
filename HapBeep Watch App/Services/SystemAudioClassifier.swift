@@ -179,7 +179,7 @@ final class SystemAudioClassifier: NSObject {
             let modelConfidence = probabilities?[prediction.label]?.doubleValue ?? 0.0
             let isCustomTargetLabel = prediction.label == "car_crash" || prediction.label == "machine_faulty"
 
-            // 🌟 FIXED LOGIC LAYER: Handle clear confirmation parameters
+            // FIXED LOGIC LAYER: Handle clear confirmation parameters
             if prediction.label == "silence" {
                 if modelConfidence >= 0.80 {
                     print("[Custom Tabular Inference] Silence verified with high confidence (\(String(format: "%.3f", modelConfidence))), clearing background noises safely.")
@@ -192,7 +192,7 @@ final class SystemAudioClassifier: NSObject {
                 return
             }
 
-            // 🌟 VALIDATION ENFORCEMENT: Enforce the explicit 80% confidence ceiling for custom pipeline triggers
+            // VALIDATION ENFORCEMENT: Enforce the explicit 80% confidence ceiling for custom pipeline triggers
             if isCustomTargetLabel && modelConfidence >= 0.80 {
                 print("[Custom Tabular Inference] Accepted Trigger -> output: \(prediction.label) with confidence \(String(format: "%.3f", modelConfidence))")
                 Task { @MainActor in
@@ -251,8 +251,7 @@ extension SystemAudioClassifier: SNResultsObserving {
             "emergency_vehicle": currentEmergencyVehicle
         ]
         
-        // Output clean intentional events immediately if they surpass standard certainty
-        if let topAppleEvent = confidenceMap.max(by: { $0.value < $1.value }), topAppleEvent.value > 0.40 {
+        if let topAppleEvent = confidenceMap.max(by: { $0.value < $1.value }), topAppleEvent.value >= 0.60 {
             print("[Apple Stream Parser] High confidence intentional event matched: \(topAppleEvent.key) (\(topAppleEvent.value))")
             Task { @MainActor in
                 self.detectedSound = topAppleEvent.key
