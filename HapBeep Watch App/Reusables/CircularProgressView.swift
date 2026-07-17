@@ -1,41 +1,40 @@
 import SwiftUI
-import Combine
 
 struct CircularProgressView: View {
     @Binding var countdown: Int
     @Binding var progress: CGFloat
+    
+    private var currentVisualProgress: CGFloat {
+        if countdown >= 3 {
+            let maxReadyTime: CGFloat = 5.0
+            let totalReadyDuration: CGFloat = maxReadyTime - 3.0
+            let remainingReadyTime = CGFloat(countdown) - 3.0
+            
+            return max(0, min(1, remainingReadyTime / totalReadyDuration))
+        } else {
+            return progress
+        }
+    }
 
     var body: some View {
         ZStack {
-            Circle()
-                .stroke(.white, lineWidth: 10)
 
             Circle()
-                .trim(from: 0, to: progress)
+                .trim(from: 0, to: currentVisualProgress)
                 .stroke(
-                    .primaryDarkBlue,
-                    style: StrokeStyle(
-                        lineWidth: 10,
-                        lineCap: .round
-                    )
+                    .teal,
+                    style: StrokeStyle(lineWidth: 10, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.linear(duration: 1), value: progress)
+                .animation(.linear(duration: 1), value: currentVisualProgress)
 
-            ZStack {
-                Text(countdown > 3 ? "Ready" : "\(countdown + 1)")
+                Text(countdown >= 3 ? "Ready" : "\(countdown + 1)")
                     .font(.title2.bold())
-                    .foregroundStyle(.white)
-
-                Text(countdown > 3 ? "Ready" : "\(countdown + 1)")
-                    .font(.title2.bold())
-                    .foregroundStyle(.primaryDarkBlue)
-                    .opacity(progress)
-            }
+                    .foregroundStyle(.teal)
         }
     }
 }
 
 #Preview {
-    CircularProgressView(countdown: .constant(5), progress: .constant(0.0))
+    CircularProgressView(countdown: .constant(3), progress: .constant(0.0))
 }
