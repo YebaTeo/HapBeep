@@ -6,11 +6,11 @@ struct CriticalAlertInfoView: View {
         ScrollView {
             VStack{
                 VStack{
+                    Spacer()
                     Text("Critical")
                         .font(.subheadline)
                         .fontWeight(.bold)
                         .foregroundStyle(.red)
-                    
                     Text("Pull over immediately and inspect your vehicle")
                         .font(.caption)
                         .foregroundStyle(.red)
@@ -24,20 +24,18 @@ struct CriticalAlertInfoView: View {
                         .font(.title2)
                         .foregroundStyle(.red)
                 }
-                
-                Spacer()
             }
         }
-        .toolbar {
-            ToolbarItem(placement: .bottomBar) {
-                NavigationLink("Continue") {
-                    GradientBackground(color: .orange) {
-                        CautionAlertInfoView()
-                    }
-                }
-                .buttonStyle(.glass)
-            }
-        }
+//        .toolbar {
+//            ToolbarItem(placement: .bottomBar) {
+//                NavigationLink("Continue") {
+//                    GradientBackground(color: .orange) {
+//                        CautionAlertInfoView()
+//                    }
+//                }
+//                .buttonStyle(.glass)
+//            }
+//        }
     }
 }
 

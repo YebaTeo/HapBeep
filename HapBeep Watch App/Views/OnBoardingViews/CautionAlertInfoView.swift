@@ -12,6 +12,7 @@ struct CautionAlertInfoView: View {
     var body: some View {
         ScrollView {
             VStack {
+                Spacer()
                 VStack{
                     Text("Caution")
                         .font(.subheadline)
@@ -38,7 +39,6 @@ struct CautionAlertInfoView: View {
                         .font(.title2)
                         .foregroundStyle(.orange)
                 }
-                
                 Spacer()
             }
         }

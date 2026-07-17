@@ -30,9 +30,10 @@ struct OnBoardingWelcomeView: View {
                 .padding(.bottom, 28)
                 
                 NavigationLink("Learn our haptics") {
-                    GradientBackground(color: .red) {
-                       CriticalAlertInfoView()
-                   }
+                    OnBoardingCompiled()
+//                    GradientBackground(color: .red) {
+//                       
+//                   }
                 }
                 .buttonStyle(.glassProminent)
                 .tint(.blue)

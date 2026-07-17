@@ -12,6 +12,7 @@ struct InformationAlertInfoView: View {
     var body: some View {
         ScrollView {
             VStack {
+                Spacer()
                 VStack{
                     Text("Information")
                         .font(.subheadline)

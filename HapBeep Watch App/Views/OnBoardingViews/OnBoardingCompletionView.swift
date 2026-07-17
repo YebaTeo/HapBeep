@@ -29,15 +29,10 @@ struct OnBoardingCompletionView: View {
             .padding(.horizontal, 8)
             .padding(.top, 4)
             
-            Spacer()
-        }
-        .toolbar {
-            ToolbarItem(placement: .bottomBar) {
-                Button("Get Started") {
-                    hasCompletedOnBoarding = true
-                }
-                .buttonStyle(.glass)
+            Button("Get Started") {
+                            hasCompletedOnBoarding = true
             }
+            .buttonStyle(.glass)
         }
     }
 }

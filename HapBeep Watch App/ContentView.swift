@@ -88,7 +88,7 @@ struct ContentView: View {
             if systemState == .drivingOff {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        
+                        isTutorialVisible = true
                     } label: {
                         Image(systemName: "questionmark")
                     }
