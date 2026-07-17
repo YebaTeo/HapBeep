@@ -123,7 +123,10 @@ struct ContentView: View {
             if systemState != .starting, let sound = activeSound {
                 ToolbarItem(placement: .bottomBar) {
                     Text(sound.cta)
-                        .foregroundStyle(sound.category.color)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.center)
+                        .font(.caption2)
+                        .foregroundStyle(.primary)
                 }
             }
         }
