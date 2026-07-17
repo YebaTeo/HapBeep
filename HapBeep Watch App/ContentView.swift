@@ -118,6 +118,14 @@ struct ContentView: View {
                     }
                 }
             }
+            
+            
+            if systemState != .starting, let sound = activeSound {
+                ToolbarItem(placement: .bottomBar) {
+                    Text(sound.cta)
+                        .foregroundStyle(sound.category.color)
+                }
+            }
         }
         .onChange(of: systemState) { _, state in
             if state == .drivingOn {
