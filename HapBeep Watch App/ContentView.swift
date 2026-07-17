@@ -183,6 +183,7 @@ struct ContentView: View {
         if let matched = matchedSound {
             print("🎉 Match Found! Updating UI State to Display Name: \(matched.displayName)")
             activeSound = matched
+            notificationManager.createNotificationBySound(sound: matched)
             
             // ✅ FIX: Inherit the background color directly from the database category configuration
             print("🎨 Updating screen background color to category color asset map target: \(matched.category.name)")

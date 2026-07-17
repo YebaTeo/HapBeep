@@ -35,9 +35,31 @@ class NotificationManager {
             content: content,
             trigger: trigger
         )
+                
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print(error)
+            }
+        }
+    }
+    
+    func createNotificationBySound(sound: Sound) {
+        let content = UNMutableNotificationContent()
+        content.title = sound.displayName
+        content.body = sound.cta
+        content.sound = sound.category.severity == 2 ? .defaultCritical : .default
         
-        print("Requesting notification...")
+        let trigger = UNTimeIntervalNotificationTrigger(
+            timeInterval: 0.1,
+            repeats: false
+        )
         
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString,
+            content: content,
+            trigger: trigger
+        )
+                
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print(error)
