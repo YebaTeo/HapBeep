@@ -29,8 +29,10 @@ struct CircularProgressView: View {
                 .animation(.smooth(duration: 0.75), value: currentVisualProgress)
 
                 Text(countdown >= 3 ? "Ready" : "\(countdown + 1)")
-                    .font(.title2.bold())
+                    .font(.title.bold())
                     .foregroundStyle(.teal)
+                    .contentTransition(.numericText())
+                    .animation(.bouncy, value: countdown)
             
             Circle()
                 .stroke(
