@@ -25,6 +25,9 @@ final class SystemAudioClassifier: NSObject {
     private var knockConfidence: Double = 0.0
     private var emergencyVehicleConfidence: Double = 0.0
 
+    // 🌟 Tracks whether Apple's raw sound analyzer already found a high-confidence match in the current frame
+    private var didAppleMatchIntentionalEvent: Bool = false
+
     // Thread-safe storage for the latest manual audio features
     struct AudioFeatures {
         let rms: Double
@@ -100,6 +103,7 @@ final class SystemAudioClassifier: NSObject {
         reverseBeepsConfidence = 0.0
         knockConfidence = 0.0
         emergencyVehicleConfidence = 0.0
+        didAppleMatchIntentionalEvent = false
         latestFeatures = AudioFeatures(rms: 0.0, peak: 0.0, zeroCrossingRate: 0.0, duration: 0.0)
         
         detectedSound = nil
@@ -149,6 +153,13 @@ final class SystemAudioClassifier: NSObject {
     // MARK: - Tabular Prediction Pipeline
     
     fileprivate func runTabularPrediction(features: AudioFeatures) {
+        // 🌟 PRIORITY BLOCK: If Apple already caught an intentional sound event with high confidence,
+        // intercept immediately so the custom tabular pipeline can't accidentally override it.
+        if didAppleMatchIntentionalEvent {
+            print("⚠️ [Tabular Pipeline Intercepted] Apple classifier has priority. Skipping custom prediction pass.")
+            return
+        }
+
         guard let model = tabularModel else { return }
 
         do {
@@ -181,7 +192,7 @@ final class SystemAudioClassifier: NSObject {
 
             // FIXED LOGIC LAYER: Handle clear confirmation parameters
             if prediction.label == "silence" {
-                if modelConfidence >= 0.80 {
+                if modelConfidence >= 0.70 {
                     print("[Custom Tabular Inference] Silence verified with high confidence (\(String(format: "%.3f", modelConfidence))), clearing background noises safely.")
                     Task { @MainActor in
                         self.detectedSound = nil
@@ -192,14 +203,14 @@ final class SystemAudioClassifier: NSObject {
                 return
             }
 
-            // VALIDATION ENFORCEMENT: Enforce the explicit 80% confidence ceiling for custom pipeline triggers
-            if isCustomTargetLabel && modelConfidence >= 0.80 {
+            // VALIDATION ENFORCEMENT: Enforce the explicit 70% confidence ceiling for custom pipeline triggers
+            if isCustomTargetLabel && modelConfidence >= 0.70 {
                 print("[Custom Tabular Inference] Accepted Trigger -> output: \(prediction.label) with confidence \(String(format: "%.3f", modelConfidence))")
                 Task { @MainActor in
                     self.detectedSound = prediction.label
                 }
             } else {
-                print("[Custom Tabular Inference] Dropped '\(prediction.label)' (Confidence: \(String(format: "%.3f", modelConfidence))). Required: Custom Label >= 0.80")
+                print("[Custom Tabular Inference] Dropped '\(prediction.label)' (Confidence: \(String(format: "%.3f", modelConfidence))). Required: Custom Label >= 0.70")
             }
             
         } catch {
@@ -251,8 +262,15 @@ extension SystemAudioClassifier: SNResultsObserving {
             "emergency_vehicle": currentEmergencyVehicle
         ]
         
+        // 🌟 Reset the frame match verification flag before searching
+        self.didAppleMatchIntentionalEvent = false
+        
         if let topAppleEvent = confidenceMap.max(by: { $0.value < $1.value }), topAppleEvent.value >= 0.60 {
             print("[Apple Stream Parser] High confidence intentional event matched: \(topAppleEvent.key) (\(topAppleEvent.value))")
+            
+            // 🌟 Flag that Apple successfully matched a priority sound pattern with confidence >= 60%
+            self.didAppleMatchIntentionalEvent = true
+            
             Task { @MainActor in
                 self.detectedSound = topAppleEvent.key
             }
