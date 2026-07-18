@@ -6,7 +6,7 @@ import CoreML
 @Observable
 final class SystemAudioClassifier: NSObject {
 
-    var detectedSound: String? // SwiftUI ContentView explicitly hooks up to this property
+    var detectedSound: String?
 
     private let audioEngine = AVAudioEngine()
     private var analyzer: SNAudioStreamAnalyzer?
@@ -15,7 +15,7 @@ final class SystemAudioClassifier: NSObject {
     private var systemRequest: SNClassifySoundRequest?
     
     // Core ML Tabular Classification Model instance
-    private var tabularModel: ClassificationTrafficRoad_2?
+    private var tabularModel: ClassificationTrafficRoad_8?
 
     // Storage for SoundAnalysis confidence values
     private var carHornConfidence: Double = 0.0
@@ -45,7 +45,7 @@ final class SystemAudioClassifier: NSObject {
     private func setupTabularModel() {
         do {
             let config = MLModelConfiguration()
-            self.tabularModel = try ClassificationTrafficRoad_2(configuration: config)
+            self.tabularModel = try ClassificationTrafficRoad_8(configuration: config)
         } catch {
             print("Failed to load Tabular Model: \(error.localizedDescription)")
         }
@@ -192,7 +192,7 @@ final class SystemAudioClassifier: NSObject {
 
             // FIXED LOGIC LAYER: Handle clear confirmation parameters
             if prediction.label == "silence" {
-                if modelConfidence >= 0.70 {
+                if modelConfidence >= 0.80 {
                     print("[Custom Tabular Inference] Silence verified with high confidence (\(String(format: "%.3f", modelConfidence))), clearing background noises safely.")
                     Task { @MainActor in
                         self.detectedSound = nil
@@ -204,13 +204,13 @@ final class SystemAudioClassifier: NSObject {
             }
 
             // VALIDATION ENFORCEMENT: Enforce the explicit 70% confidence ceiling for custom pipeline triggers
-            if isCustomTargetLabel && modelConfidence >= 0.70 {
+            if isCustomTargetLabel && modelConfidence >= 0.80 {
                 print("[Custom Tabular Inference] Accepted Trigger -> output: \(prediction.label) with confidence \(String(format: "%.3f", modelConfidence))")
                 Task { @MainActor in
                     self.detectedSound = prediction.label
                 }
             } else {
-                print("[Custom Tabular Inference] Dropped '\(prediction.label)' (Confidence: \(String(format: "%.3f", modelConfidence))). Required: Custom Label >= 0.70")
+                print("[Custom Tabular Inference] Dropped '\(prediction.label)' (Confidence: \(String(format: "%.3f", modelConfidence))). Required: Custom Label >= 0.80")
             }
             
         } catch {
