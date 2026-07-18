@@ -192,7 +192,7 @@ final class SystemAudioClassifier: NSObject {
 
             // FIXED LOGIC LAYER: Handle clear confirmation parameters
             if prediction.label == "silence" {
-                if modelConfidence >= 0.80 {
+                if modelConfidence >= 0.75 {
                     print("[Custom Tabular Inference] Silence verified with high confidence (\(String(format: "%.3f", modelConfidence))), clearing background noises safely.")
                     Task { @MainActor in
                         self.detectedSound = nil
@@ -204,13 +204,13 @@ final class SystemAudioClassifier: NSObject {
             }
 
             // VALIDATION ENFORCEMENT: Enforce the explicit 70% confidence ceiling for custom pipeline triggers
-            if isCustomTargetLabel && modelConfidence >= 0.80 {
+            if isCustomTargetLabel && modelConfidence >= 0.75 {
                 print("[Custom Tabular Inference] Accepted Trigger -> output: \(prediction.label) with confidence \(String(format: "%.3f", modelConfidence))")
                 Task { @MainActor in
                     self.detectedSound = prediction.label
                 }
             } else {
-                print("[Custom Tabular Inference] Dropped '\(prediction.label)' (Confidence: \(String(format: "%.3f", modelConfidence))). Required: Custom Label >= 0.80")
+                print("[Custom Tabular Inference] Dropped '\(prediction.label)' (Confidence: \(String(format: "%.3f", modelConfidence))). Required: Custom Label >= 0.75")
             }
             
         } catch {
