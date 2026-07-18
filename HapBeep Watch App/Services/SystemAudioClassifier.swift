@@ -15,7 +15,7 @@ final class SystemAudioClassifier: NSObject {
     private var systemRequest: SNClassifySoundRequest?
     
     // Core ML Tabular Classification Model instance
-    private var tabularModel: ClassificationTrafficRoad_8?
+    private var tabularModel: ClassificationTrafficRoad_10?
 
     // Storage for SoundAnalysis confidence values
     private var carHornConfidence: Double = 0.0
@@ -45,7 +45,7 @@ final class SystemAudioClassifier: NSObject {
     private func setupTabularModel() {
         do {
             let config = MLModelConfiguration()
-            self.tabularModel = try ClassificationTrafficRoad_8(configuration: config)
+            self.tabularModel = try ClassificationTrafficRoad_10(configuration: config)
         } catch {
             print("Failed to load Tabular Model: \(error.localizedDescription)")
         }
