@@ -25,7 +25,7 @@ struct ContentView: View {
     
     let notificationManager = NotificationManager.shared
     
-    // Instantiating the clean background lifecycle controller
+    // Dedicated background lifecycle manager
     @State private var lockEngine = WatchLockEngine()
     
     private var activeSoundName: String {
@@ -137,7 +137,6 @@ struct ContentView: View {
         }
         .onChange(of: systemState) { _, state in
             if state == .starting {
-                // Instantly lock screen runtime foreground configuration
                 lockEngine.startLock()
             } else if state == .drivingOn {
                 try? classifier.start()
@@ -145,7 +144,6 @@ struct ContentView: View {
                 classifier.stop()
                 classifier.detectedSound = nil
                 activeSound = nil
-                // Shut down execution token to rest watch framework resources
                 lockEngine.stopLock()
             }
         }

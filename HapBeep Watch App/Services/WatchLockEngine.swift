@@ -1,3 +1,4 @@
+import Foundation
 import HealthKit
 
 // MARK: - Safe Background Wake Lock Engine
@@ -8,7 +9,6 @@ class WatchLockEngine: NSObject, HKWorkoutSessionDelegate {
     func requestAuthorization() {
         guard HKHealthStore.isHealthDataAvailable() else { return }
         
-        // We only request authorization for the generic workout wrapper, NO biometric types.
         let typesToShare: Set = [HKQuantityType.workoutType()]
         let typesToRead: Set = [HKQuantityType.workoutType()]
         
@@ -17,11 +17,10 @@ class WatchLockEngine: NSObject, HKWorkoutSessionDelegate {
     
     func startLock() {
         let configuration = HKWorkoutConfiguration()
-        configuration.activityType = .other // Tells the OS it is a custom utility behavior
+        configuration.activityType = .other
         configuration.locationType = .indoor
         
         do {
-            // Allocate a minimalist background session container
             let session = try HKWorkoutSession(healthStore: healthStore, configuration: configuration)
             session.delegate = self
             
@@ -29,19 +28,28 @@ class WatchLockEngine: NSObject, HKWorkoutSessionDelegate {
             session.startActivity(with: Date())
             
             self.workoutSession = session
-            print("🚀 App runtime background execution lock engaged safely.")
         } catch {
-            print("❌ Failed to bind watchOS background frame context: \(error.localizedDescription)")
+            print("Failed to bind watchOS background frame context: \(error.localizedDescription)")
         }
     }
     
     func stopLock() {
-        workoutSession?.end()
+        guard let session = workoutSession else { return }
+        session.end()
         self.workoutSession = nil
-        print("🛑 App runtime background execution lock disengaged.")
     }
     
-    // Minimalist Delegate Requirements
-    func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {}
-    func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {}
+    func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
+         if toState == .ended || toState == .stopped {
+            DispatchQueue.main.async {
+                self.workoutSession = nil
+            }
+        }
+    }
+    
+    func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
+        DispatchQueue.main.async {
+            self.workoutSession = nil
+        }
+    }
 }
