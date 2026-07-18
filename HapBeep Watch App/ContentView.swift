@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import Combine
+import HealthKit
 
 struct ContentView: View {
     @State var isSettingsVisible: Bool = false
@@ -13,6 +14,7 @@ struct ContentView: View {
     @Query(sort: \Category.severity) private var categories: [Category]
     @State private var player = VocabularyPlayer()
     @State private var classifier = SystemAudioClassifier()
+    @State private var motionDismiss = MotionDismissManager()
     
     @State private var currentBackgroundColor: Color = .primaryDarkBlue
     
@@ -23,11 +25,13 @@ struct ContentView: View {
     
     let notificationManager = NotificationManager.shared
     
+    // Instantiating the clean background lifecycle controller
+    @State private var lockEngine = WatchLockEngine()
+    
     private var activeSoundName: String {
         if systemState == .drivingOff {
             return "Driving Mode: ON"
         }
-        
         return activeSound?.displayName ?? "Listening..."
     }
     
@@ -121,7 +125,6 @@ struct ContentView: View {
                 }
             }
             
-            
             if systemState != .starting, let sound = activeSound {
                 ToolbarItem(placement: .bottomBar) {
                     Text(sound.cta)
@@ -133,66 +136,63 @@ struct ContentView: View {
             }
         }
         .onChange(of: systemState) { _, state in
-            if state == .drivingOn {
+            if state == .starting {
+                // Instantly lock screen runtime foreground configuration
+                lockEngine.startLock()
+            } else if state == .drivingOn {
                 try? classifier.start()
-            } else {
+            } else if state == .drivingOff {
                 classifier.stop()
                 classifier.detectedSound = nil
                 activeSound = nil
+                // Shut down execution token to rest watch framework resources
+                lockEngine.stopLock()
             }
         }
         .onChange(of: classifier.detectedSound) { _, detected in
             guard let detected else { return }
-            print("📱 UI OnChange Triggered via Classifier: \(detected)")
             handleDetectedSound(detected)
         }
-        .onChange(of: player.isPlaying) { _, isPlaying in
-            if !isPlaying {
-                currentBackgroundColor = .primaryDarkBlue
-                classifier.detectedSound = nil
-                activeSound = nil
+        .onChange(of: activeSound) { _, sound in
+            if sound != nil {
+                motionDismiss.start()
+            } else {
+                motionDismiss.stop()
             }
         }
         .onReceive(timer) { _ in
-            guard systemState == .starting else {
-                return
-            }
-            
+            guard systemState == .starting else { return }
             if countdown < 1 {
                 systemState = .drivingOn
                 return
             }
-            
             countdown -= 1
         }
-        .sheet(isPresented: $isSettingsVisible) {
-            SettingsView()
-        }
-        .sheet(isPresented: $isTutorialVisible) {
-            TutorialView()
+        .sheet(isPresented: $isSettingsVisible) { SettingsView() }
+        .sheet(isPresented: $isTutorialVisible) { TutorialView() }
+        .onAppear {
+            lockEngine.requestAuthorization()
+            motionDismiss.onDismiss = { dismissAlert() }
         }
     }
     
+    private func dismissAlert() {
+        activeSound = nil
+        classifier.detectedSound = nil
+        currentBackgroundColor = .primaryDarkBlue
+        motionDismiss.stop()
+    }
+    
     private func handleDetectedSound(_ detected: String) {
-        print("🔍 UI Handle Executing -> Querying SwiftData for match: \(detected)")
         let pattern = RoadPattern.pattern(for: detected)
         player.play(pattern)
-        
         let matchedSound: Sound? = sounds.first { $0.name == detected }
         
         if let matched = matchedSound {
-            print("🎉 Match Found! Updating UI State to Display Name: \(matched.displayName)")
             activeSound = matched
             notificationManager.createNotificationBySound(sound: matched)
-            
-            // ✅ FIX: Inherit the background color directly from the database category configuration
-            print("🎨 Updating screen background color to category color asset map target: \(matched.category.name)")
             currentBackgroundColor = matched.category.color
         } else {
-            print("⚠️ Match Failed! '\(detected)' doesn't exist inside the active sounds database array.")
-            print("   Available database labels were: \(sounds.map { $0.name })")
-            
-            // Fallback strategy if database structure breaks:
             let targetSeverity: Int = pattern.priority / 50
             if let category = categories.first(where: { $0.severity == targetSeverity }) {
                 currentBackgroundColor = category.color
@@ -200,17 +200,13 @@ struct ContentView: View {
         }
     }
 
-    func startDrivingMode() {
-        systemState = .starting
-    }
-    
+    func startDrivingMode() { systemState = .starting }
     func stopDrivingMode() {
         countdown = initialCountdown
         systemState = .drivingOff
-        activeSound  = nil
+        activeSound = nil
     }
 }
-
 enum SystemState {
     case drivingOn
     case drivingOff
