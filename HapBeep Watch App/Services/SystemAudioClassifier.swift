@@ -14,8 +14,10 @@ final class SystemAudioClassifier: NSObject {
 
     private var systemRequest: SNClassifySoundRequest?
     
-    // Core ML Tabular Classification Model instance
-    private var tabularModel: ClassificationTrafficRoad_10?
+    // Three Core ML Tabular Classification Model instances
+    private var tabularModel2: ClassificationTrafficRoad_2?
+    private var tabularModel10: ClassificationTrafficRoad_10?
+    private var tabularModel12: ClassificationTrafficRoad_12?
 
     // Storage for SoundAnalysis confidence values
     private var carHornConfidence: Double = 0.0
@@ -25,7 +27,7 @@ final class SystemAudioClassifier: NSObject {
     private var knockConfidence: Double = 0.0
     private var emergencyVehicleConfidence: Double = 0.0
 
-    // 🌟 Tracks whether Apple's raw sound analyzer already found a high-confidence match in the current frame
+    // Tracks whether Apple's raw sound analyzer already found a high-confidence match in the current frame
     private var didAppleMatchIntentionalEvent: Bool = false
 
     // Thread-safe storage for the latest manual audio features
@@ -39,15 +41,18 @@ final class SystemAudioClassifier: NSObject {
 
     override init() {
         super.init()
-        setupTabularModel()
+        setupTabularModels()
     }
 
-    private func setupTabularModel() {
+    private func setupTabularModels() {
         do {
             let config = MLModelConfiguration()
-            self.tabularModel = try ClassificationTrafficRoad_10(configuration: config)
+            self.tabularModel2 = try ClassificationTrafficRoad_2(configuration: config)
+            self.tabularModel10 = try ClassificationTrafficRoad_10(configuration: config)
+            self.tabularModel12 = try ClassificationTrafficRoad_12(configuration: config)
+            print("Successfully loaded 3 tabular models (2, 10, and 12).")
         } catch {
-            print("Failed to load Tabular Model: \(error.localizedDescription)")
+            print("Failed to load Tabular Models: \(error.localizedDescription)")
         }
     }
 
@@ -150,71 +155,118 @@ final class SystemAudioClassifier: NSObject {
         )
     }
 
-    // MARK: - Tabular Prediction Pipeline
+    // MARK: - Tabular Weighted Soft Voting Prediction Pipeline
     
     fileprivate func runTabularPrediction(features: AudioFeatures) {
-        // 🌟 PRIORITY BLOCK: If Apple already caught an intentional sound event with high confidence,
-        // intercept immediately so the custom tabular pipeline can't accidentally override it.
         if didAppleMatchIntentionalEvent {
             print("⚠️ [Tabular Pipeline Intercepted] Apple classifier has priority. Skipping custom prediction pass.")
             return
         }
 
-        guard let model = tabularModel else { return }
+        guard let model2 = tabularModel2,
+              let model10 = tabularModel10,
+              let model12 = tabularModel12 else {
+            print("⚠️ [Tabular Pipeline] One or more models are not initialized.")
+            return
+        }
 
         do {
-            let prediction = try model.prediction(
-                car_horn_conf: carHornConfidence,
-                traffic_noise_conf: trafficNoiseConfidence,
-                vehicle_skidding_conf: vehicleSkiddingConfidence,
-                reverse_beeps_conf: reverseBeepsConfidence,
-                knock_conf: knockConfidence,
-                emergency_vehicle_conf: emergencyVehicleConfidence,
-                rms: features.rms,
-                peak: features.peak,
-                zero_crossing_rate: features.zeroCrossingRate,
-                duration: features.duration
+            // 1. Gather individual predictions from all 3 active models
+            let pred2 = try model2.prediction(
+                car_horn_conf: carHornConfidence, traffic_noise_conf: trafficNoiseConfidence,
+                vehicle_skidding_conf: vehicleSkiddingConfidence, reverse_beeps_conf: reverseBeepsConfidence,
+                knock_conf: knockConfidence, emergency_vehicle_conf: emergencyVehicleConfidence,
+                rms: features.rms, peak: features.peak, zero_crossing_rate: features.zeroCrossingRate, duration: features.duration
             )
 
-            let probabilities = prediction.featureValue(for: "labelProbability")?.dictionaryValue
+            let pred10 = try model10.prediction(
+                car_horn_conf: carHornConfidence, traffic_noise_conf: trafficNoiseConfidence,
+                vehicle_skidding_conf: vehicleSkiddingConfidence, reverse_beeps_conf: reverseBeepsConfidence,
+                knock_conf: knockConfidence, emergency_vehicle_conf: emergencyVehicleConfidence,
+                rms: features.rms, peak: features.peak, zero_crossing_rate: features.zeroCrossingRate, duration: features.duration
+            )
             
-            print("🤖 [Custom Tabular Inference] Evaluated Confidences:")
-            if let probabilities = probabilities {
-                for (label, conf) in probabilities {
-                    if let labelString = label as? String, let confDouble = conf as? Double {
-                        print(" • \(labelString): \(String(format: "%.3f", confDouble))")
+            let pred12 = try model12.prediction(
+                car_horn_conf: carHornConfidence, traffic_noise_conf: trafficNoiseConfidence,
+                vehicle_skidding_conf: vehicleSkiddingConfidence, reverse_beeps_conf: reverseBeepsConfidence,
+                knock_conf: knockConfidence, emergency_vehicle_conf: emergencyVehicleConfidence,
+                rms: features.rms, peak: features.peak, zero_crossing_rate: features.zeroCrossingRate, duration: features.duration
+            )
+
+            // 2. Extract probability dictionaries
+            let probs2 = pred2.featureValue(for: "labelProbability")?.dictionaryValue ?? [:]
+            let probs10 = pred10.featureValue(for: "labelProbability")?.dictionaryValue ?? [:]
+            let probs12 = pred12.featureValue(for: "labelProbability")?.dictionaryValue ?? [:]
+
+            // 3. Accumulate weighted probabilities (Soft Voting)
+            var accumulatedProbabilities: [String: Double] = [:]
+            
+            // Define weights: Model 10 is twice as significant as Model 2 and 12
+            let weightedDicts: [([AnyHashable: Any], Double)] = [
+                (probs2, 1.0),
+                (probs10, 2.0), // Higher significance factor applied here
+                (probs12, 1.0)
+            ]
+            
+            let totalEnsembleWeight = weightedDicts.reduce(0.0) { $0 + $1.1 } // Evaluates to 4.0
+
+            for (dict, weight) in weightedDicts {
+                for (labelObj, confidenceObj) in dict {
+                    if let label = labelObj as? String, let confidence = confidenceObj as? Double {
+                        accumulatedProbabilities[label, default: 0.0] += (confidence * weight)
                     }
                 }
             }
 
-            let modelConfidence = probabilities?[prediction.label]?.doubleValue ?? 0.0
-            let isCustomTargetLabel = prediction.label == "car_crash" || prediction.label == "machine_faulty"
+            // Calculate true weighted averages across the ensemble
+            var averageProbabilities: [String: Double] = [:]
+            for (label, weightedTotalConfidence) in accumulatedProbabilities {
+                averageProbabilities[label] = weightedTotalConfidence / totalEnsembleWeight
+            }
 
-            // FIXED LOGIC LAYER: Handle clear confirmation parameters
-            if prediction.label == "silence" {
-                if modelConfidence >= 0.75 {
-                    print("[Custom Tabular Inference] Silence verified with high confidence (\(String(format: "%.3f", modelConfidence))), clearing background noises safely.")
+            // 4. Find the winning label based on highest average confidence
+            guard let winningElement = averageProbabilities.max(by: { $0.value < $1.value }) else { return }
+            let votedLabel = winningElement.key
+            let ensembleConfidence = winningElement.value
+
+            print("🤖 [Custom Ensemble Weighted Soft Voting] Evaluated Confidences:")
+            for (label, conf) in averageProbabilities {
+                print(" • \(label): \(String(format: "%.3f", conf))")
+            }
+
+            // 5. Execution Layer Logic (With Custom Threshold Checks per Custom Label)
+            if votedLabel == "silence" {
+                if ensembleConfidence >= 0.75 {
+                    print("[Ensemble Inference] Silence verified with high confidence (\(String(format: "%.3f", ensembleConfidence))), clearing background noises safely.")
                     Task { @MainActor in
                         self.detectedSound = nil
                     }
                 } else {
-                    print("[Custom Tabular Inference] Tabular predicted 'silence' but confidence was weak (\(String(format: "%.3f", modelConfidence))). Keeping Apple state records.")
+                    print("[Ensemble Inference] Ensemble predicted 'silence' but confidence was weak (\(String(format: "%.3f", ensembleConfidence))). Keeping Apple state records.")
                 }
                 return
             }
 
-            // VALIDATION ENFORCEMENT: Enforce the explicit 70% confidence ceiling for custom pipeline triggers
-            if isCustomTargetLabel && modelConfidence >= 0.75 {
-                print("[Custom Tabular Inference] Accepted Trigger -> output: \(prediction.label) with confidence \(String(format: "%.3f", modelConfidence))")
+            // Assign unique threshold levels to target custom conditions
+            var dynamicThreshold: Double? = nil
+            if votedLabel == "car_crash" {
+                dynamicThreshold = 0.80 // Car Crash set to 80%
+            } else if votedLabel == "machine_faulty" {
+                dynamicThreshold = 0.75 // Machine Faulty set to 75%
+            }
+
+            if let requiredThreshold = dynamicThreshold, ensembleConfidence >= requiredThreshold {
+                print("[Ensemble Inference] Accepted Trigger -> output: \(votedLabel) with ensemble confidence \(String(format: "%.3f", ensembleConfidence))")
                 Task { @MainActor in
-                    self.detectedSound = prediction.label
+                    self.detectedSound = votedLabel
                 }
             } else {
-                print("[Custom Tabular Inference] Dropped '\(prediction.label)' (Confidence: \(String(format: "%.3f", modelConfidence))). Required: Custom Label >= 0.75")
+                let requiredString = dynamicThreshold != nil ? String(format: "%.2f", dynamicThreshold!) : "N/A"
+                print("[Ensemble Inference] Dropped '\(votedLabel)' (Ensemble Confidence: \(String(format: "%.3f", ensembleConfidence))). Required: Custom Label >= \(requiredString)")
             }
             
         } catch {
-            print("Tabular CoreML Prediction Failed: \(error.localizedDescription)")
+            print("Ensemble CoreML Prediction Failed: \(error.localizedDescription)")
         }
     }
 }
@@ -253,7 +305,6 @@ extension SystemAudioClassifier: SNResultsObserving {
         print(" • knock: \(String(format: "%.3f", currentKnock))")
         print(" • emergency_vehicle: \(String(format: "%.3f", currentEmergencyVehicle))")
 
-        // Map discrete targeted sound variants
         let confidenceMap: [String: Double] = [
             "car_horn": currentCarHorn,
             "vehicle_skidding": currentVehicleSkidding,
