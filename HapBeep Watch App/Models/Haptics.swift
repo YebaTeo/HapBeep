@@ -122,8 +122,14 @@ enum RoadPattern: String, CaseIterable, Identifiable, Codable {
                 .init(haptic: .notification, delayAfter: 0.30),
                 .init(haptic: .notification, delayAfter: 0.15),
                 .init(haptic: .notification, delayAfter: 0.15),
-                .init(haptic: .notification, delayAfter: 0.0),
-            ]
+                .init(haptic: .failure,      delayAfter: 0.06),
+                .init(haptic: .notification, delayAfter: 0.06),
+                .init(haptic: .failure,      delayAfter: 0.30),
+                .init(haptic: .failure,      delayAfter: 0.06),
+                .init(haptic: .notification, delayAfter: 0.30),
+                .init(haptic: .notification, delayAfter: 0.15),
+                .init(haptic: .notification, delayAfter: 0.15),
+                .init(haptic: .notification, delayAfter: 0.0),            ]
         }
     }
 }

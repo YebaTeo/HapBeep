@@ -139,7 +139,7 @@ struct ContentView: View {
                     Text(sound.cta)
                         .fixedSize(horizontal: false, vertical: true)
                         .multilineTextAlignment(.center)
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundStyle(.primary)
                 }
             }
