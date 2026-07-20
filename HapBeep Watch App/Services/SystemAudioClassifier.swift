@@ -252,7 +252,7 @@ final class SystemAudioClassifier: NSObject {
             if votedLabel == "car_crash" {
                 dynamicThreshold = 0.80 // Car Crash set to 80%
             } else if votedLabel == "machine_faulty" {
-                dynamicThreshold = 0.75 // Machine Faulty set to 75%
+                dynamicThreshold = 0.85 // Machine Faulty set to 75%
             }
 
             if let requiredThreshold = dynamicThreshold, ensembleConfidence >= requiredThreshold {
