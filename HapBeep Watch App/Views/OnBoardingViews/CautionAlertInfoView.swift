@@ -9,6 +9,12 @@
 import SwiftUI
 
 struct CautionAlertInfoView: View {
+    private var icons: [String] = [
+        "horn.blast",
+        "car.2.fill",
+        "car.rear.and.tire.marks"
+    ]
+    
     var body: some View {
         VStack {
             VStack{
@@ -25,17 +31,11 @@ struct CautionAlertInfoView: View {
             .padding(.bottom, 10)
             
             HStack (spacing: 12) {
-                Image(systemName: "horn.blast")
-                    .font(.title2)
-                    .foregroundStyle(.orange)
-                
-                Image(systemName: "car.2.fill")
-                    .font(.title2)
-                    .foregroundStyle(.orange)
-                
-                Image(systemName: "car.rear.and.tire.marks")
-                    .font(.title2)
-                    .foregroundStyle(.orange)
+                ForEach(icons, id: \.description) { icon in
+                    Image(systemName: icon)
+                        .font(.title2)
+                        .foregroundStyle(.orange)
+                }
             }
         }
     }

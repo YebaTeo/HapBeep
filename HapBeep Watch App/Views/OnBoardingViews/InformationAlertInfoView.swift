@@ -9,6 +9,11 @@
 import SwiftUI
 
 struct InformationAlertInfoView: View {
+    private var icons: [String] = [
+        "car.top.radiowaves.rear",
+        "car.window.right.exclamationmark"
+    ]
+    
     var body: some View {
         VStack {
             VStack{
@@ -24,14 +29,12 @@ struct InformationAlertInfoView: View {
             }
             .padding(.bottom, 16)
             
-            HStack (spacing: 15) {
-                Image(systemName: "car.top.radiowaves.rear")
-                    .font(.title2)
-                    .foregroundStyle(.teal)
-                
-                Image(systemName: "car.window.right.exclamationmark")
-                    .font(.title2)
-                    .foregroundStyle(.teal)
+            HStack (spacing: 12) {
+                ForEach(icons, id: \.description) { icon in
+                    Image(systemName: icon)
+                        .font(.title2)
+                        .foregroundStyle(.teal)
+                }
             }
         }
     }

@@ -1,7 +1,13 @@
 import SwiftUI
 import SwiftData
 
-struct CriticalAlertInfoView: View {
+struct CriticalAlertInfoView: View {    
+    private var icons: [String] = [
+        "light.beacon.max.fill",
+        "exclamationmark.triangle.fill",
+        "wrench.and.screwdriver.fill"
+    ]
+    
     var body: some View {
         VStack{
             VStack{
@@ -18,9 +24,11 @@ struct CriticalAlertInfoView: View {
             .padding(.bottom, 10)
             
             HStack (spacing: 12) {
-                Image(systemName: "light.beacon.max.fill")
-                    .font(.title2)
-                    .foregroundStyle(.red)
+                ForEach(icons, id: \.description) { icon in
+                    Image(systemName: icon)
+                        .font(.title2)
+                        .foregroundStyle(.red)
+                }
             }
         }
     }
@@ -30,4 +38,5 @@ struct CriticalAlertInfoView: View {
     NavigationStack {
         CriticalAlertInfoView()
     }
+    .modelContainer(DataManager.shared.container)
 }
