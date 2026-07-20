@@ -27,7 +27,7 @@ struct OnBoardingWelcomeView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 
                 }
-                .padding(.bottom, 28)
+                .padding(.bottom, 8)
                 
                 NavigationLink("Learn our haptics") {
                     OnBoardingCompiled()

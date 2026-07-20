@@ -22,7 +22,7 @@ struct OnBoardingCompletionView: View {
             VStack {
                 Text("You are all set")
                     .font(.body.bold())
-                Text("HapBeeb is ready to assist you!")
+                Text("HapBeep is ready to assist you!")
                     .font(.caption2)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
