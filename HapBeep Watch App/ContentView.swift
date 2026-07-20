@@ -69,10 +69,12 @@ struct ContentView: View {
                             Image(systemName: sound.icon)
                                 .font(.largeTitle)
                                 .foregroundStyle(sound.category.color)
+                                .symbolEffect(.variableColor.iterative)
                         } else {
                             Image(systemName: "car.front.waves.left.and.right.and.up.fill")
                                 .font(.system(.title))
                                 .foregroundColor(.accentColor)
+                                .symbolEffect(.variableColor.iterative)
                         }
                         
                         VStack(spacing: 2) {
