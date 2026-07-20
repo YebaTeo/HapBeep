@@ -198,17 +198,17 @@ final class SystemAudioClassifier: NSObject {
             let probs10 = pred10.featureValue(for: "labelProbability")?.dictionaryValue ?? [:]
             let probs12 = pred12.featureValue(for: "labelProbability")?.dictionaryValue ?? [:]
 
-            // --- PHASE 1: WEIGHTED SOFT VOTING ---
+            // 3. Accumulate weighted probabilities (Soft Voting)
             var accumulatedProbabilities: [String: Double] = [:]
             
-            // Model 10 gets double weight (2.0 vs 1.0)
+            // Define weights: Model 10 is twice as significant as Model 2 and 12
             let weightedDicts: [([AnyHashable: Any], Double)] = [
                 (probs2, 1.0),
                 (probs10, 2.0), // Higher significance factor applied here
                 (probs12, 1.0)
             ]
             
-            let totalEnsembleWeight = weightedDicts.reduce(0.0) { $0 + $1.1 } // Evaluates to 3.0
+            let totalEnsembleWeight = weightedDicts.reduce(0.0) { $0 + $1.1 } // Evaluates to 4.0
 
             for (dict, weight) in weightedDicts {
                 for (labelObj, confidenceObj) in dict {
@@ -218,52 +218,51 @@ final class SystemAudioClassifier: NSObject {
                 }
             }
 
+            // Calculate true weighted averages across the ensemble
             var averageProbabilities: [String: Double] = [:]
             for (label, weightedTotalConfidence) in accumulatedProbabilities {
                 averageProbabilities[label] = weightedTotalConfidence / totalEnsembleWeight
             }
 
-            guard let softWinningElement = averageProbabilities.max(by: { $0.value < $1.value }) else { return }
-            let softVotedLabel = softWinningElement.key
-            let softEnsembleConfidence = softWinningElement.value
+            // 4. Find the winning label based on highest average confidence
+            guard let winningElement = averageProbabilities.max(by: { $0.value < $1.value }) else { return }
+            let votedLabel = winningElement.key
+            let ensembleConfidence = winningElement.value
 
-            // Requires BOTH models to explicitly agree on the winning label (2 out of 2)
-            let hardVotesPassesConsensus = (pred10.label == softVotedLabel) && (pred12.label == softVotedLabel)
+            print("🤖 [Custom Ensemble Weighted Soft Voting] Evaluated Confidences:")
+            for (label, conf) in averageProbabilities {
+                print(" • \(label): \(String(format: "%.3f", conf))")
+            }
 
-            print("🤖 [Ensemble Soft Voting] Winner: '\(softVotedLabel)' (Conf: \(String(format: "%.3f", softEnsembleConfidence)))")
-            print("🗳️ [Ensemble Hard Voting] Model10: '\(pred10.label)', Model12: '\(pred12.label)' | Both Agree: \(hardVotesPassesConsensus)")
-
-            // --- PHASE 3: EXECUTION LAYER LOGIC ---
-            if softVotedLabel == "silence" {
-                if softEnsembleConfidence >= 0.75 {
-                    print("[Ensemble Inference] Silence verified with high confidence (\(String(format: "%.3f", softEnsembleConfidence))), clearing background noises safely.")
+            // 5. Execution Layer Logic (With Custom Threshold Checks per Custom Label)
+            if votedLabel == "silence" {
+                if ensembleConfidence >= 0.75 {
+                    print("[Ensemble Inference] Silence verified with high confidence (\(String(format: "%.3f", ensembleConfidence))), clearing background noises safely.")
                     Task { @MainActor in
                         self.detectedSound = nil
                     }
+                } else {
+                    print("[Ensemble Inference] Ensemble predicted 'silence' but confidence was weak (\(String(format: "%.3f", ensembleConfidence))). Keeping Apple state records.")
                 }
                 return
             }
 
+            // Assign unique threshold levels to target custom conditions
             var dynamicThreshold: Double? = nil
-            if softVotedLabel == "car_crash" {
-                dynamicThreshold = 0.85
-            } else if softVotedLabel == "machine_faulty" {
-                dynamicThreshold = 0.75
+            if votedLabel == "car_crash" {
+                dynamicThreshold = 0.85 // Car Crash set to 80%
+            } else if votedLabel == "machine_faulty" {
+                dynamicThreshold = 0.85 // Machine Faulty set to 75%
             }
 
-            if let requiredThreshold = dynamicThreshold {
-                let passesSoftVoting = softEnsembleConfidence >= requiredThreshold
-
-                // Accept trigger ONLY if both soft threshold passes AND both models agree (2/2 votes)
-                if passesSoftVoting && hardVotesPassesConsensus {
-                    print("[Ensemble Inference] Accepted Trigger -> output: \(softVotedLabel) | Conf: \(String(format: "%.3f", softEnsembleConfidence)) | Votes: 2/2 Consensus")
-                    Task { @MainActor in
-                        self.detectedSound = softVotedLabel
-                    }
-                } else {
-                    let requiredString = String(format: "%.2f", requiredThreshold)
-                    print("[Ensemble Inference] Dropped '\(softVotedLabel)' -> Soft Pass: \(passesSoftVoting) (Req: >= \(requiredString)), 2/2 Vote Agreement: \(hardVotesPassesConsensus)")
+            if let requiredThreshold = dynamicThreshold, ensembleConfidence >= requiredThreshold {
+                print("[Ensemble Inference] Accepted Trigger -> output: \(votedLabel) with ensemble confidence \(String(format: "%.3f", ensembleConfidence))")
+                Task { @MainActor in
+                    self.detectedSound = votedLabel
                 }
+            } else {
+                let requiredString = dynamicThreshold != nil ? String(format: "%.2f", dynamicThreshold!) : "N/A"
+                print("[Ensemble Inference] Dropped '\(votedLabel)' (Ensemble Confidence: \(String(format: "%.3f", ensembleConfidence))). Required: Custom Label >= \(requiredString)")
             }
             
         } catch {

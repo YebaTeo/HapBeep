@@ -189,6 +189,7 @@ struct ContentView: View {
         classifier.detectedSound = nil
         currentBackgroundColor = .primaryDarkBlue
         motionDismiss.stop()
+        player.stop()
     }
     
     private func handleDetectedSound(_ detected: String) {
@@ -213,6 +214,7 @@ struct ContentView: View {
         countdown = initialCountdown
         systemState = .drivingOff
         activeSound = nil
+        lockEngine.stopLock()
     }
 }
 enum SystemState {
