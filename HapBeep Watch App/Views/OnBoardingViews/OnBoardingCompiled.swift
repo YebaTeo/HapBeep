@@ -16,7 +16,8 @@ struct OnBoardingCompiled: View {
         ZStack {
             TabView(selection: $selectedTab) {
                 OnBoarding2View()
-                    .tag(0)
+                .tag(0)
+                
                 GradientBackground(color: .red) {
                     CriticalAlertInfoView()
                 }
@@ -29,13 +30,18 @@ struct OnBoardingCompiled: View {
                     InformationAlertInfoView()
                 }
                 .tag(3)
+                
+                OnBoardingGesture()
+                .tag(4)
+                
                 OnBoardingCompletionView()
-                    .tag(4)
+                .tag(5)
+                
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             
             HStack(alignment: .bottom, spacing: 6) {
-                ForEach(0..<5, id: \.self) { index in
+                ForEach(0..<6, id: \.self) { index in
                     Circle()
                         .fill(index == selectedTab ? .white : .gray.opacity(0.4))
                         .frame(width: 6, height: 6)
