@@ -10,46 +10,32 @@ import SwiftUI
 
 struct CautionAlertInfoView: View {
     var body: some View {
-        ScrollView {
-            VStack {
-                Spacer()
-                VStack{
-                    Text("Caution")
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.orange)
-                    
-                    Text("Check your mirrors to see what's happening around")
-                        .font(.caption)
-                        .foregroundStyle(.orange)
-                        .multilineTextAlignment(.center)
-                }
-                .padding(.bottom, 10)
+        VStack {
+            VStack{
+                Text("Caution")
+                    .font(.body)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.orange)
                 
-                HStack (spacing: 12) {
-                    Image(systemName: "horn.blast")
-                        .font(.title2)
-                        .foregroundStyle(.orange)
-                    
-                    Image(systemName: "car.2.fill")
-                        .font(.title2)
-                        .foregroundStyle(.orange)
-                    
-                    Image(systemName: "car.rear.and.tire.marks")
-                        .font(.title2)
-                        .foregroundStyle(.orange)
-                }
-                Spacer()
+                Text("Check your mirrors to see what's happening around")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+                    .multilineTextAlignment(.center)
             }
-        }
-        .toolbar {
-            ToolbarItem(placement: .bottomBar) {
-                NavigationLink("Continue") {
-                    GradientBackground(color: .teal) {
-                        InformationAlertInfoView()
-                    }
-                }
-                .buttonStyle(.glass)
+            .padding(.bottom, 10)
+            
+            HStack (spacing: 12) {
+                Image(systemName: "horn.blast")
+                    .font(.title2)
+                    .foregroundStyle(.orange)
+                
+                Image(systemName: "car.2.fill")
+                    .font(.title2)
+                    .foregroundStyle(.orange)
+                
+                Image(systemName: "car.rear.and.tire.marks")
+                    .font(.title2)
+                    .foregroundStyle(.orange)
             }
         }
     }

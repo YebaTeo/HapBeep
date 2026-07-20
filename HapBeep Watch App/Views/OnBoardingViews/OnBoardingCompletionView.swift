@@ -21,7 +21,7 @@ struct OnBoardingCompletionView: View {
             
             VStack {
                 Text("You are all set")
-                    .font(.title3.bold())
+                    .font(.body.bold())
                 Text("HapBeeb is ready to assist you!")
                     .font(.caption2)
                     .multilineTextAlignment(.center)
@@ -29,7 +29,7 @@ struct OnBoardingCompletionView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, 8)
-            .padding(.top, 4)
+            .padding(.vertical, 4)
             
             Button("Get Started") {
                 hasCompletedOnBoarding = true

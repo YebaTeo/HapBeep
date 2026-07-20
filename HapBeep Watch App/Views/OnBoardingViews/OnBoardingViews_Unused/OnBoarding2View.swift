@@ -20,7 +20,7 @@ struct OnBoarding2View: View {
                 .font(.body)
                 .fontWeight(.semibold)
             
-            Text("HapBeep listens to your sorroundings and convert the sounds into vibrations.")
+            Text("HapBeep listens to your surroundings and convert sounds into vibrations.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

@@ -10,41 +10,28 @@ import SwiftUI
 
 struct InformationAlertInfoView: View {
     var body: some View {
-        ScrollView {
-            VStack {
-                Spacer()
-                VStack{
-                    Text("Information")
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.teal)
-                    
-                    Text("Check your dashboard for system alerts")
-                        .font(.caption)
-                        .foregroundStyle(.teal)
-                        .multilineTextAlignment(.center)
-                }
-                .padding(.bottom, 16)
+        VStack {
+            VStack{
+                Text("Information")
+                    .font(.body)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.teal)
                 
-                HStack (spacing: 15) {
-                    Image(systemName: "car.top.radiowaves.rear")
-                        .font(.title2)
-                        .foregroundStyle(.teal)
-                    
-                    Image(systemName: "car.window.right.exclamationmark")
-                        .font(.title2)
-                        .foregroundStyle(.teal)
-                }
-                
-                Spacer()
+                Text("Check your dashboard for system alerts")
+                    .font(.caption)
+                    .foregroundStyle(.teal)
+                    .multilineTextAlignment(.center)
             }
-        }
-        .toolbar {
-            ToolbarItem(placement: .bottomBar) {
-                NavigationLink("Continue") {
-                    OnBoardingCompletionView()
-                }
-                .buttonStyle(.glass)
+            .padding(.bottom, 16)
+            
+            HStack (spacing: 15) {
+                Image(systemName: "car.top.radiowaves.rear")
+                    .font(.title2)
+                    .foregroundStyle(.teal)
+                
+                Image(systemName: "car.window.right.exclamationmark")
+                    .font(.title2)
+                    .foregroundStyle(.teal)
             }
         }
     }
