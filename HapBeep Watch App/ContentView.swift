@@ -74,15 +74,18 @@ struct ContentView: View {
                                 .font(.system(.title))
                                 .foregroundColor(.accentColor)
                         }
-                        Text(activeSoundName)
-                            .font(.title3.bold())
-                            .padding(.top, 4)
                         
-                        Text("Hapbeep can make mistakes, always double-check")
-                            .font(.system(size: 11))
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 1)
+                        VStack(spacing: 2) {
+                            Text(activeSoundName)
+                                .font(.title3.bold())
+                                .padding(.top, 4)
+                            
+                            Text("Hapbeep can make mistakes, always double-check")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 8)
+                        }
                     }
                 }
             }
@@ -145,7 +148,7 @@ struct ContentView: View {
             if state == .starting {
                 lockEngine.startLock()
             } else if state == .drivingOn {
-                //try? classifier.start()
+                try? classifier.start()
             } else if state == .drivingOff {
                 classifier.stop()
                 classifier.detectedSound = nil
