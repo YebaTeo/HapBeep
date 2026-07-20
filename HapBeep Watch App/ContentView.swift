@@ -30,7 +30,7 @@ struct ContentView: View {
     
     private var activeSoundName: String {
         if systemState == .drivingOff {
-            return "Driving Mode: ON"
+            return "Driving Mode: Off"
         }
         return activeSound?.displayName ?? "Listening"
     }
@@ -77,6 +77,12 @@ struct ContentView: View {
                         Text(activeSoundName)
                             .font(.title3.bold())
                             .padding(.top, 4)
+                        
+                        Text("Hapbeep can make mistakes, always double-check")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 1)
                     }
                 }
             }
@@ -139,7 +145,7 @@ struct ContentView: View {
             if state == .starting {
                 lockEngine.startLock()
             } else if state == .drivingOn {
-                try? classifier.start()
+                //try? classifier.start()
             } else if state == .drivingOff {
                 classifier.stop()
                 classifier.detectedSound = nil
