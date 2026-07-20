@@ -19,6 +19,7 @@ struct OnBoarding2View: View {
             Text("Sound to Haptics")
                 .font(.body)
                 .fontWeight(.semibold)
+                .padding(.bottom, 2)
             
             Text("HapBeep listens to your surroundings and convert sounds into vibrations.")
                 .font(.caption)
