@@ -32,7 +32,7 @@ struct ContentView: View {
         if systemState == .drivingOff {
             return "Driving Mode: ON"
         }
-        return activeSound?.displayName ?? "Listening..."
+        return activeSound?.displayName ?? "Listening"
     }
     
     private var activeSoundImage: String {
