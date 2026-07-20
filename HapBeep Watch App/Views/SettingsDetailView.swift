@@ -17,7 +17,7 @@ struct SettingsDetailView: View {
 
     var body: some View {
         List {
-            Section("Haptic Pattern") {
+            Section("Haptic Patterns") {
                 ForEach(availablePatterns) { pattern in
                     Button {
                         category.hapticPattern = pattern
@@ -37,8 +37,9 @@ struct SettingsDetailView: View {
 
             Section("Sounds") {
                 ForEach(category.sounds) { sound in
-                    @Bindable var sound = sound
-                    Toggle(sound.displayName, isOn: $sound.isActive)
+                    //@Bindable var sound = sound
+                    Text(sound.displayName)
+                    //Toggle(sound.displayName, isOn: $sound.isActive)
                 }
             }
         }
