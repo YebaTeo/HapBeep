@@ -12,23 +12,37 @@ struct TutorialView: View {
     @State private var player = VocabularyPlayer()
     
     var body: some View {
-        TabView(selection: $selectedTab) {
-            OnBoarding2View()
-                .tag(0)
-            GradientBackground(color: .red) {
-                CriticalAlertInfoView()
+        ZStack {
+            TabView(selection: $selectedTab) {
+                OnBoarding2View()
+                    .tag(0)
+                GradientBackground(color: .red) {
+                    CriticalAlertInfoView()
+                }
+                .tag(1)
+                GradientBackground(color: .orange) {
+                    CautionAlertInfoView()
+                }
+                .tag(2)
+                GradientBackground(color: .teal) {
+                    InformationAlertInfoView()
+                }
+                .tag(3)
+                OnBoardingCompletionView()
+                    .tag(4)
             }
-            .tag(1)
-            GradientBackground(color: .orange) {
-                CautionAlertInfoView()
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            
+            HStack(alignment: .bottom, spacing: 6) {
+                ForEach(0..<5, id: \.self) { index in
+                    Circle()
+                        .fill(index == selectedTab ? .white : .gray.opacity(0.4))
+                        .frame(width: 6, height: 6)
+                }
             }
-            .tag(2)
-            GradientBackground(color: .teal) {
-                InformationAlertInfoView()
-            }
-            .tag(3)
-            OnBoardingCompletionView()
-                .tag(4)
+            .frame(maxHeight: .infinity, alignment: .bottom)
+            .padding(.bottom, 12)
+            .ignoresSafeArea(edges: .bottom)
         }
         .toolbar(.hidden, for: .bottomBar)
         .navigationTitle("About Us")
