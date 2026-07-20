@@ -63,12 +63,12 @@ class DataManager {
         
         // (name: internal identifier, displayName: shown in UI, icon: asset name)
         let soundData: [(name: String, displayName: String, icon: String, cta: String, category: Category)] = [
-            ("reverse_beeps",     "Parking Sensor",     "car.top.radiowaves.rear", "Check your dashboard for system alerts", informational),
-            ("knock",             "Knocking",           "car.window.right.exclamationmark",    "Check your window",   informational),
+            ("reverse_beeps",     "Parking Sensor",     "car.top.radiowaves.rear", "Be aware of your surroundings", informational),
+            ("knock",             "Knocking",           "car.window.right.exclamationmark",    "Check your windows",   informational),
             
-            ("car_horn",          "Car Horn",           "horn.blast",    "Check your mirrors to see what's happening around",    caution),
-            ("traffic_noise",     "Approaching Vehicle","car.2.fill",    "Check your mirrors to see what's happening around",     caution),
-            ("vehicle_skidding",  "Tire Screeching",    "car.rear.and.tire.marks", "Check your mirrors to see what's happening around", caution),
+            ("car_horn",          "Car Horn",           "horn.blast",    "Check your mirrors",    caution),
+            ("traffic_noise",     "Approaching Vehicle","car.2.fill",    "Check your mirrors",     caution),
+            ("vehicle_skidding",  "Tire Screeching",    "car.rear.and.tire.marks", "Check your mirrors", caution),
             
             ("emergency_vehicle", "Sirens",             "light.beacon.max.fill", "Check your mirrors and pull over to give way", critical),
             ("car_crash",         "Car Crash Detected", "exclamationmark.triangle.fill", "Pull over and inspect your vehicle",  critical),
