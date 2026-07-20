@@ -14,6 +14,7 @@ struct OnBoarding2View: View {
             Image(systemName: "waveform")
                 .foregroundStyle(.blue)
                 .font(.largeTitle)
+                .symbolEffect(.variableColor.iterative)
                 .padding(10)
             
             Text("Sound to Haptics")

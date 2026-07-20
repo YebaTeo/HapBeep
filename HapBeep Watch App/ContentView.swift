@@ -81,7 +81,7 @@ struct ContentView: View {
                                 .font(.title3.bold())
                                 .padding(.top, 4)
                             
-                            Text("Hapbeep can make mistakes, always double-check")
+                            Text("HapBeep can make mistakes, always double-check")
                                 .font(.system(size: 12))
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.center)
