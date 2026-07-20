@@ -10,9 +10,9 @@ import SwiftUI
 
 struct OnBoarding2View: View {
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Image(systemName: "waveform")
-                .foregroundStyle(.blue)
+                .foregroundStyle(.teal)
                 .font(.largeTitle)
                 .padding(10)
             
