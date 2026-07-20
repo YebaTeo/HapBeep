@@ -31,9 +31,6 @@ struct OnBoardingWelcomeView: View {
                 
                 NavigationLink("Learn our haptics") {
                     OnBoardingCompiled()
-//                    GradientBackground(color: .red) {
-//                       
-//                   }
                 }
                 .buttonStyle(.glassProminent)
                 .tint(.blue)

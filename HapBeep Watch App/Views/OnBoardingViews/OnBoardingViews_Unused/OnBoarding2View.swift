@@ -27,6 +27,7 @@ struct OnBoarding2View: View {
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .padding(.bottom, 16)
     }
 }
 

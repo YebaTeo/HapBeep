@@ -26,6 +26,7 @@ struct CriticalAlertInfoView: View {
                 }
             }
         }
+        .padding(.bottom, 16)
 //        .toolbar {
 //            ToolbarItem(placement: .bottomBar) {
 //                NavigationLink("Continue") {
