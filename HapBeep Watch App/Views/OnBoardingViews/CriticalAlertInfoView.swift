@@ -9,7 +9,7 @@ struct CriticalAlertInfoView: View {
                     .font(.body)
                     .fontWeight(.bold)
                     .foregroundStyle(.red)
-                Text("Pull over immediately and inspect your vehicle")
+                Text("Immediate action may be required")
                     .font(.caption)
                     .foregroundStyle(.red)
                     .multilineTextAlignment(.center)

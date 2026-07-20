@@ -17,7 +17,7 @@ struct CautionAlertInfoView: View {
                     .fontWeight(.bold)
                     .foregroundStyle(.orange)
                 
-                Text("Check your mirrors to see what's happening around")
+                Text("Be alert and prepare to react")
                     .font(.caption)
                     .foregroundStyle(.orange)
                     .multilineTextAlignment(.center)

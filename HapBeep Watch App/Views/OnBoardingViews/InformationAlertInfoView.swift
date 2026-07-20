@@ -17,7 +17,7 @@ struct InformationAlertInfoView: View {
                     .fontWeight(.bold)
                     .foregroundStyle(.teal)
                 
-                Text("Check your dashboard for system alerts")
+                Text("General sounds that may be useful to notice")
                     .font(.caption)
                     .foregroundStyle(.teal)
                     .multilineTextAlignment(.center)

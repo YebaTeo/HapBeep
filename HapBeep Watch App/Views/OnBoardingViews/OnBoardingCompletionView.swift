@@ -31,7 +31,7 @@ struct OnBoardingCompletionView: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             
-            Button("Get Started") {
+            Button("Finish") {
                 hasCompletedOnBoarding = true
                 dismiss()
             }
