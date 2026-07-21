@@ -74,11 +74,11 @@ class DataManager {
             ("car_horn",          "Car Horn",           "horn.blast",    "Check your mirrors",    caution),
             ("traffic_noise",     "Approaching Vehicle","car.2.fill",    "Check your mirrors",     caution),
             ("vehicle_skidding",  "Tire Screeching",    "car.rear.and.tire.marks", "Check your mirrors", caution),
-            ("bump", "Bump", "car.rear.road.lane.distance.3", "Pull over and inspect your vehicle",  caution),
+//            ("bump", "Bump", "car.rear.road.lane.distance.3", "Pull over and inspect your vehicle",  caution),
             
             ("emergency_vehicle", "Sirens",             "light.beacon.max.fill", "Check your mirrors and pull over to give way", critical),
             ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver.fill", "Pull over and inspect your vehicle", critical),
-            ("major_crash", "Crash", "car.side.rear.and.collision.and.car.side.front", "Pull over and inspect your vehicle", critical)
+            ("car_crash", "Car Bump", "car.rear.road.lane.distance.3", "Pull over and inspect your vehicle", caution)
         ]
         
         for data in soundData {
