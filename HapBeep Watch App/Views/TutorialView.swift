@@ -14,7 +14,7 @@ struct TutorialView: View {
     var body: some View {
         ZStack {
             TabView(selection: $selectedTab) {
-                OnBoarding2View()
+                OnBoardingIntroView()
                 .tag(0)
                 
                 GradientBackground(color: .red) {
@@ -34,14 +34,11 @@ struct TutorialView: View {
                 
                 OnBoardingGesture()
                 .tag(4)
-                
-                OnBoardingCompletionView()
-                .tag(5)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             
             HStack(alignment: .bottom, spacing: 6) {
-                ForEach(0..<6, id: \.self) { index in
+                ForEach(0..<5, id: \.self) { index in
                     Circle()
                         .fill(index == selectedTab ? .white : .gray.opacity(0.4))
                         .frame(width: 6, height: 6)

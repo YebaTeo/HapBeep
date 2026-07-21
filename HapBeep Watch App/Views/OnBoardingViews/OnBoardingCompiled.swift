@@ -15,7 +15,7 @@ struct OnBoardingCompiled: View {
     var body: some View {
         ZStack {
             TabView(selection: $selectedTab) {
-                OnBoarding2View()
+                OnBoardingIntroView()
                 .tag(0)
                 
                 GradientBackground(color: .red) {

@@ -9,9 +9,9 @@ import SwiftUI
 
 struct OnBoardingGesture: View {
     var body: some View {
-        VStack {
-            Image(systemName: "waveform")
-                .foregroundStyle(.blue)
+        VStack(spacing: 0) {
+            Image(systemName: "applewatch")
+                .foregroundStyle(.teal)
                 .font(.largeTitle)
                 .padding(10)
             

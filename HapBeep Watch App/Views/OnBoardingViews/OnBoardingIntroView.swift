@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct OnBoarding2View: View {
+struct OnBoardingIntroView: View {
     var body: some View {
         VStack(spacing: 0) {
             Image(systemName: "waveform")
@@ -34,5 +34,5 @@ struct OnBoarding2View: View {
 }
 
 #Preview {
-    OnBoarding2View()
+    OnBoardingIntroView()
 }
