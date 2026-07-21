@@ -9,7 +9,7 @@ struct ContentView: View {
     
     @State private var activeSound: Sound?
     @State private var selectedIndex: Int = 0
-
+    
     @Query(sort: \Sound.name) private var sounds: [Sound]
     @Query(sort: \Category.severity) private var categories: [Category]
     @State private var player = VocabularyPlayer()
@@ -124,11 +124,11 @@ struct ContentView: View {
             if systemState != .starting && activeSound == nil {
                 ToolbarItem(placement: .bottomBar) {
                     if systemState == .drivingOn {
-                        IconButton(icon: "stop.fill") {
+                        TextButton(text: "Stop") {
                             stopDrivingMode()
                         }
                     } else {
-                        IconButton(icon: "play.fill") {
+                        TextButton(text: "Start") {
                             startDrivingMode()
                         }
                     }
@@ -193,9 +193,13 @@ struct ContentView: View {
     }
     
     private func handleDetectedSound(_ detected: String) {
+        let matchedSound: Sound? = sounds.first { $0.name == detected }
+        if let matched = matchedSound, matched.isActive == false {
+            return
+        }
+        
         let pattern = RoadPattern.pattern(for: detected)
         player.play(pattern)
-        let matchedSound: Sound? = sounds.first { $0.name == detected }
         
         if let matched = matchedSound {
             activeSound = matched
@@ -208,8 +212,9 @@ struct ContentView: View {
             }
         }
     }
-
+    
     func startDrivingMode() { systemState = .starting }
+    
     func stopDrivingMode() {
         countdown = initialCountdown
         systemState = .drivingOff

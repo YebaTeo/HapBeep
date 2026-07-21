@@ -9,6 +9,9 @@
 import SwiftUI
 
 struct InformationAlertInfoView: View {
+    @State private var tapCount: Int = 0
+    private var dataManager = DataManager.shared
+    
     private var icons: [String] = [
         "car.top.radiowaves.rear",
         "car.window.right.exclamationmark"
@@ -31,9 +34,19 @@ struct InformationAlertInfoView: View {
             
             HStack (spacing: 12) {
                 ForEach(icons, id: \.description) { icon in
-                    Image(systemName: icon)
-                        .font(.title2)
-                        .foregroundStyle(.teal)
+                    Button {
+                        tapCount += 1
+                        
+                        if tapCount >= 12 {
+                            dataManager.resetData()
+                            tapCount = 0
+                        }
+                    } label: {
+                        Image(systemName: icon)
+                            .font(.title2)
+                            .foregroundStyle(.teal)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
