@@ -14,19 +14,14 @@ struct TextButton: View {
     var body: some View {
         Button(action: action) {
             Text(text)
-                .foregroundStyle(.white)
                 .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background(Color.black.opacity(0.6))
-                .clipShape(Capsule())
+                .padding(.vertical, 12)
         }
         .buttonStyle(.plain)
+        .glassEffect(.clear, in: Capsule())
     }
 }
 
 #Preview {
-    VStack {
-        TextButton(text: "Start") {}
-    }
-    .background(.white)
+    TextButton(text: "Start") {}
 }
