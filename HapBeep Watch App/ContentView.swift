@@ -149,7 +149,7 @@ struct ContentView: View {
             if state == .starting {
                 lockEngine.startLock()
             } else if state == .drivingOn {
-                //try? classifier.start()
+                try? classifier.start()
             } else if state == .drivingOff {
                 classifier.stop()
                 classifier.detectedSound = nil
