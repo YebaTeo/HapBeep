@@ -14,10 +14,8 @@ final class SystemAudioClassifier: NSObject {
 
     private var systemRequest: SNClassifySoundRequest?
     
-    // Three Core ML Tabular Classification Model instances
-    private var tabularModel2: ClassificationTrafficRoad_2?
-    private var tabularModel10: ClassificationTrafficRoad_10?
-    private var tabularModel12: ClassificationTrafficRoad_12?
+    // 🌟 Core ML Tabular Model instance
+    private var tabularModel20: ClassificationTrafficRoad_20?
 
     // Storage for SoundAnalysis confidence values
     private var carHornConfidence: Double = 0.0
@@ -41,18 +39,16 @@ final class SystemAudioClassifier: NSObject {
 
     override init() {
         super.init()
-        setupTabularModels()
+        setupTabularModel()
     }
 
-    private func setupTabularModels() {
+    private func setupTabularModel() {
         do {
             let config = MLModelConfiguration()
-            self.tabularModel2 = try ClassificationTrafficRoad_2(configuration: config)
-            self.tabularModel10 = try ClassificationTrafficRoad_10(configuration: config)
-            self.tabularModel12 = try ClassificationTrafficRoad_12(configuration: config)
-            print("Successfully loaded 3 tabular models (2, 10, and 12).")
+            self.tabularModel20 = try ClassificationTrafficRoad_20(configuration: config)
+            print("Successfully loaded Tabular Model 20.")
         } catch {
-            print("Failed to load Tabular Models: \(error.localizedDescription)")
+            print("Failed to load Tabular Model 20: \(error.localizedDescription)")
         }
     }
 
@@ -155,118 +151,103 @@ final class SystemAudioClassifier: NSObject {
         )
     }
 
-    // MARK: - Tabular Weighted Soft Voting Prediction Pipeline
+    // MARK: - Model 20 Prediction Pipeline
     
     fileprivate func runTabularPrediction(features: AudioFeatures) {
         if didAppleMatchIntentionalEvent {
-            print("⚠️ [Tabular Pipeline Intercepted] Apple classifier has priority. Skipping custom prediction pass.")
+            print("⚠️ [Tabular Pipeline Intercepted] Apple classifier matched an intentional event. Skipping Model 20 prediction pass.")
             return
         }
 
-        guard let model2 = tabularModel2,
-              let model10 = tabularModel10,
-              let model12 = tabularModel12 else {
-            print("⚠️ [Tabular Pipeline] One or more models are not initialized.")
+        guard let model = tabularModel20 else {
+            print("❌ [Tabular Pipeline Error] Model 20 instance is nil/uninitialized.")
             return
         }
+
+        // 🔍 DEBUG PRINT 1: Features being passed into Model 20
+        print("""
+        --------------------------------------------------
+        🧪 [Model 20 Input Features]
+         • Car Horn Conf: \(String(format: "%.3f", carHornConfidence))
+         • Traffic Noise Conf: \(String(format: "%.3f", trafficNoiseConfidence))
+         • Vehicle Skidding Conf: \(String(format: "%.3f", vehicleSkiddingConfidence))
+         • Reverse Beeps Conf: \(String(format: "%.3f", reverseBeepsConfidence))
+         • Knock Conf: \(String(format: "%.3f", knockConfidence))
+         • Emergency Vehicle Conf: \(String(format: "%.3f", emergencyVehicleConfidence))
+         • RMS: \(String(format: "%.5f", features.rms)) | Peak: \(String(format: "%.5f", features.peak))
+         • ZCR: \(String(format: "%.5f", features.zeroCrossingRate))
+        """)
 
         do {
-            // 1. Gather individual predictions from all 3 active models
-            let pred2 = try model2.prediction(
-                car_horn_conf: carHornConfidence, traffic_noise_conf: trafficNoiseConfidence,
-                vehicle_skidding_conf: vehicleSkiddingConfidence, reverse_beeps_conf: reverseBeepsConfidence,
-                knock_conf: knockConfidence, emergency_vehicle_conf: emergencyVehicleConfidence,
-                rms: features.rms, peak: features.peak, zero_crossing_rate: features.zeroCrossingRate, duration: features.duration
+            let prediction = try model.prediction(
+                car_horn_conf: carHornConfidence,
+                traffic_noise_conf: trafficNoiseConfidence,
+                vehicle_skidding_conf: vehicleSkiddingConfidence,
+                reverse_beeps_conf: reverseBeepsConfidence,
+                knock_conf: knockConfidence,
+                emergency_vehicle_conf: emergencyVehicleConfidence,
+                rms: features.rms,
+                peak: features.peak,
+                zero_crossing_rate: features.zeroCrossingRate
             )
 
-            let pred10 = try model10.prediction(
-                car_horn_conf: carHornConfidence, traffic_noise_conf: trafficNoiseConfidence,
-                vehicle_skidding_conf: vehicleSkiddingConfidence, reverse_beeps_conf: reverseBeepsConfidence,
-                knock_conf: knockConfidence, emergency_vehicle_conf: emergencyVehicleConfidence,
-                rms: features.rms, peak: features.peak, zero_crossing_rate: features.zeroCrossingRate, duration: features.duration
-            )
-            
-            let pred12 = try model12.prediction(
-                car_horn_conf: carHornConfidence, traffic_noise_conf: trafficNoiseConfidence,
-                vehicle_skidding_conf: vehicleSkiddingConfidence, reverse_beeps_conf: reverseBeepsConfidence,
-                knock_conf: knockConfidence, emergency_vehicle_conf: emergencyVehicleConfidence,
-                rms: features.rms, peak: features.peak, zero_crossing_rate: features.zeroCrossingRate, duration: features.duration
-            )
+            let probabilities = prediction.featureValue(for: "labelProbability")?.dictionaryValue ?? [:]
+            let predictedLabel = prediction.label
+            let modelConfidence = probabilities[predictedLabel]?.doubleValue ?? 0.0
 
-            // 2. Extract probability dictionaries
-            let probs2 = pred2.featureValue(for: "labelProbability")?.dictionaryValue ?? [:]
-            let probs10 = pred10.featureValue(for: "labelProbability")?.dictionaryValue ?? [:]
-            let probs12 = pred12.featureValue(for: "labelProbability")?.dictionaryValue ?? [:]
-
-            // 3. Accumulate weighted probabilities (Soft Voting)
-            var accumulatedProbabilities: [String: Double] = [:]
-            
-            // Define weights: Model 10 is twice as significant as Model 2 and 12
-            let weightedDicts: [([AnyHashable: Any], Double)] = [
-                (probs2, 1.0),
-                (probs10, 2.0), // Higher significance factor applied here
-                (probs12, 1.0)
-            ]
-            
-            let totalEnsembleWeight = weightedDicts.reduce(0.0) { $0 + $1.1 } // Evaluates to 4.0
-
-            for (dict, weight) in weightedDicts {
-                for (labelObj, confidenceObj) in dict {
-                    if let label = labelObj as? String, let confidence = confidenceObj as? Double {
-                        accumulatedProbabilities[label, default: 0.0] += (confidence * weight)
-                    }
+            // 🔍 DEBUG PRINT 2: Full probability output dictionary
+            print("🤖 [Model 20 Inference Result]")
+            print(" • Top Predicted Label: '\(predictedLabel)' (\(String(format: "%.3f", modelConfidence)))")
+            print(" • All Label Probabilities:")
+            for (labelObj, probObj) in probabilities {
+                if let label = labelObj as? String, let prob = probObj as? Double {
+                    print("   - \(label): \(String(format: "%.3f", prob))")
                 }
             }
 
-            // Calculate true weighted averages across the ensemble
-            var averageProbabilities: [String: Double] = [:]
-            for (label, weightedTotalConfidence) in accumulatedProbabilities {
-                averageProbabilities[label] = weightedTotalConfidence / totalEnsembleWeight
-            }
-
-            // 4. Find the winning label based on highest average confidence
-            guard let winningElement = averageProbabilities.max(by: { $0.value < $1.value }) else { return }
-            let votedLabel = winningElement.key
-            let ensembleConfidence = winningElement.value
-
-            print("🤖 [Custom Ensemble Weighted Soft Voting] Evaluated Confidences:")
-            for (label, conf) in averageProbabilities {
-                print(" • \(label): \(String(format: "%.3f", conf))")
-            }
-
-            // 5. Execution Layer Logic (With Custom Threshold Checks per Custom Label)
-            if votedLabel == "silence" {
-                if ensembleConfidence >= 0.75 {
-                    print("[Ensemble Inference] Silence verified with high confidence (\(String(format: "%.3f", ensembleConfidence))), clearing background noises safely.")
+            // Execution Layer Logic
+            if predictedLabel == "silence" {
+                if modelConfidence >= 0.75 {
+                    print("✅ [Model 20 Action] Silence verified (\(String(format: "%.3f", modelConfidence)) >= 0.75), clearing detected sound.")
                     Task { @MainActor in
                         self.detectedSound = nil
                     }
                 } else {
-                    print("[Ensemble Inference] Ensemble predicted 'silence' but confidence was weak (\(String(format: "%.3f", ensembleConfidence))). Keeping Apple state records.")
+                    print("⚠️ [Model 20 Action] Predicted 'silence' but confidence was too low (\(String(format: "%.3f", modelConfidence)) < 0.75). No change.")
                 }
                 return
             }
 
-            // Assign unique threshold levels to target custom conditions
+            // Dynamic Threshold Assignments per Label
             var dynamicThreshold: Double? = nil
-            if votedLabel == "car_crash" {
-                dynamicThreshold = 0.85 // Car Crash set to 80%
-            } else if votedLabel == "machine_faulty" {
-                dynamicThreshold = 0.85 // Machine Faulty set to 75%
+            switch predictedLabel {
+            case "major_crash":
+                dynamicThreshold = 0.50
+            case "machine_faulty":
+                dynamicThreshold = 0.85
+            case "bump":
+                dynamicThreshold = 0.70
+            default:
+                break
             }
 
-            if let requiredThreshold = dynamicThreshold, ensembleConfidence >= requiredThreshold {
-                print("[Ensemble Inference] Accepted Trigger -> output: \(votedLabel) with ensemble confidence \(String(format: "%.3f", ensembleConfidence))")
-                Task { @MainActor in
-                    self.detectedSound = votedLabel
+            if let requiredThreshold = dynamicThreshold {
+                if modelConfidence >= requiredThreshold {
+                    print("✅ [Model 20 Action] Accepted Trigger -> output: '\(predictedLabel)' | Conf: \(String(format: "%.3f", modelConfidence)) >= \(requiredThreshold)")
+                    Task { @MainActor in
+                        self.detectedSound = predictedLabel
+                    }
+                } else {
+                    let requiredString = String(format: "%.2f", requiredThreshold)
+                    print("⛔ [Model 20 Action] Dropped '\(predictedLabel)' (Conf: \(String(format: "%.3f", modelConfidence)) < Required: \(requiredString))")
                 }
             } else {
-                let requiredString = dynamicThreshold != nil ? String(format: "%.2f", dynamicThreshold!) : "N/A"
-                print("[Ensemble Inference] Dropped '\(votedLabel)' (Ensemble Confidence: \(String(format: "%.3f", ensembleConfidence))). Required: Custom Label >= \(requiredString)")
+                print("ℹ️ [Model 20 Action] Label '\(predictedLabel)' has no specific dynamic threshold assigned.")
             }
+            print("--------------------------------------------------")
             
         } catch {
-            print("Ensemble CoreML Prediction Failed: \(error.localizedDescription)")
+            print("❌ Model 20 CoreML Prediction Failed: \(error.localizedDescription)")
         }
     }
 }

@@ -71,8 +71,9 @@ class DataManager {
             ("vehicle_skidding",  "Tire Screeching",    "car.rear.and.tire.marks", "Check your mirrors", caution),
             
             ("emergency_vehicle", "Sirens",             "light.beacon.max.fill", "Check your mirrors and pull over to give way", critical),
-            ("car_crash",         "Car Crash Detected", "exclamationmark.triangle.fill", "Pull over and inspect your vehicle",  critical),
-            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver.fill", "Pull over and inspect your vehicle", critical)
+            ("bump",         "Bump", "exclamationmark.triangle.fill", "Pull over and inspect your vehicle",  caution),
+            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver.fill", "Pull over and inspect your vehicle", critical),
+            ("major_crash", "Car Crash Detected", "exclamation.triangle.fill", "Pull over and inspect your vehicle", critical)
         ]
         
         for data in soundData {
