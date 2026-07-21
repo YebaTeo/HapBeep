@@ -68,7 +68,7 @@ class DataManager {
         
         // (name: internal identifier, displayName: shown in UI, icon: asset name)
         let soundData: [(name: String, displayName: String, icon: String, cta: String, category: Category)] = [
-            ("reverse_beeps",     "Parking Sensor",     "car.top.radiowaves.rear", "Be aware of your surroundings", informational),
+            ("reverse_beeps",     "Dashboard Alert",     "car.top.radiowaves.rear", "Check the system dashboard", informational),
             ("knock",             "Knocking",           "car.window.right.exclamationmark",    "Check your windows",   informational),
             
             ("car_horn",          "Car Horn",           "horn.blast",    "Check your mirrors",    caution),
