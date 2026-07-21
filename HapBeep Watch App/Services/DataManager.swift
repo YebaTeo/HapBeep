@@ -71,13 +71,13 @@ class DataManager {
             ("reverse_beeps",     "Dashboard Alert",     "powermeter", "Check the system dashboard", informational),
             ("knock",             "Knocking",           "car.window.right.exclamationmark",    "Check your windows",   informational),
             
-            ("car_horn",          "Car Horn",           "horn.blast",    "Check your mirrors",    caution),
-            ("traffic_noise",     "Approaching Vehicle","car.2.fill",    "Check your mirrors",     caution),
+            ("car_horn",          "Horn",           "horn.blast",    "Check your mirrors",    caution),
+            ("traffic_noise",     "Approaching Vehicle","car.2",    "Check your mirrors",     caution),
             ("vehicle_skidding",  "Tire Screeching",    "car.rear.and.tire.marks", "Check your mirrors", caution),
             ("bump", "Bump", "car.rear.road.lane.distance.3", "Pull over and inspect your vehicle",  caution),
             
-            ("emergency_vehicle", "Sirens",             "light.beacon.max.fill", "Check your mirrors and pull over to give way", critical),
-            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver.fill", "Pull over and inspect your vehicle", critical),
+            ("emergency_vehicle", "Sirens",             "light.beacon.max", "Check your mirrors and pull over to give way", critical),
+            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver", "Pull over and inspect your vehicle", critical),
             ("major_crash", "Crash", "car.side.rear.and.collision.and.car.side.front", "Pull over and inspect your vehicle", critical)
         ]
         
