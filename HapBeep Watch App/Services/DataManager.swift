@@ -29,6 +29,11 @@ class DataManager {
         insertSampleData()
     }
     
+    func resetData() {
+        deleteData()
+        insertSampleData()
+    }
+    
     private func insertSampleData() {
         let categoryDescriptor = FetchDescriptor<Category>()
         let soundDescriptor = FetchDescriptor<Sound>()
@@ -85,6 +90,14 @@ class DataManager {
             print("Successfully updated model instances inside database layer context records.")
         } catch {
             print("Failed to insert sample data: \(error)")
+        }
+    }
+    
+    private func deleteData() {
+        do {
+            try context.delete(model: Category.self)
+        } catch {
+            print("Failed to delete all sounds: \(error)")
         }
     }
 }
