@@ -9,7 +9,7 @@ class Category {
     var colorName: String
     var hapticPattern: RoadPattern
 
-    @Relationship(inverse: \Sound.category)
+    @Relationship(deleteRule: .cascade, inverse: \Sound.category)
     var sounds: [Sound]
 
     var color: Color {

@@ -37,9 +37,9 @@ struct SettingsDetailView: View {
 
             Section("Sounds") {
                 ForEach(category.sounds) { sound in
-                    //@Bindable var sound = sound
-                    Text(sound.displayName)
-                    //Toggle(sound.displayName, isOn: $sound.isActive)
+                    @Bindable var sound = sound
+                    Toggle(sound.displayName, isOn: $sound.isActive)
+                    //Text(sound.displayName)
                 }
             }
         }

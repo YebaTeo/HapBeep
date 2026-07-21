@@ -193,9 +193,13 @@ struct ContentView: View {
     }
     
     private func handleDetectedSound(_ detected: String) {
+        let matchedSound: Sound? = sounds.first { $0.name == detected }
+        if let matched = matchedSound, matched.isActive == false {
+            return
+        }
+        
         let pattern = RoadPattern.pattern(for: detected)
         player.play(pattern)
-        let matchedSound: Sound? = sounds.first { $0.name == detected }
         
         if let matched = matchedSound {
             activeSound = matched
