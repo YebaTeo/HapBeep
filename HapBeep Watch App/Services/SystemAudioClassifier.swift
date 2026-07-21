@@ -222,7 +222,7 @@ final class SystemAudioClassifier: NSObject {
             var dynamicThreshold: Double? = nil
             switch predictedLabel {
             case "major_crash":
-                dynamicThreshold = 0.50
+                dynamicThreshold = 0.60
             case "machine_faulty":
                 dynamicThreshold = 0.85
             case "bump":
