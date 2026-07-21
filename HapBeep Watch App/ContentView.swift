@@ -124,15 +124,13 @@ struct ContentView: View {
             if systemState != .starting && activeSound == nil {
                 ToolbarItem(placement: .bottomBar) {
                     if systemState == .drivingOn {
-                        Button("End") {
+                        TextButton(text: "Stop") {
                             stopDrivingMode()
                         }
-                        .buttonStyle(.glass)
                     } else {
-                        Button("Start") {
+                        TextButton(text: "Start") {
                             startDrivingMode()
                         }
-                        .buttonStyle(.glass)
                     }
                 }
             }
@@ -151,7 +149,7 @@ struct ContentView: View {
             if state == .starting {
                 lockEngine.startLock()
             } else if state == .drivingOn {
-                try? classifier.start()
+                //try? classifier.start()
             } else if state == .drivingOff {
                 classifier.stop()
                 classifier.detectedSound = nil
@@ -216,6 +214,7 @@ struct ContentView: View {
     }
     
     func startDrivingMode() { systemState = .starting }
+    
     func stopDrivingMode() {
         countdown = initialCountdown
         systemState = .drivingOff
