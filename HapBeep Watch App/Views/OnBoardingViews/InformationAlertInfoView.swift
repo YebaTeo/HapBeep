@@ -1,26 +1,23 @@
-
-//
-//  Haptics1.swift
-//  HapBeep Watch App
-//
-//  Created by Michelle Intan Handa on 15/07/26.
-//
-
 import SwiftUI
+import SwiftData
 
 struct InformationAlertInfoView: View {
+    @Query(filter: #Predicate<Category> { category in
+        category.name == "Information"
+    })
+    private var categories: [Category]
+
+    private var category: Category? {
+        categories.first
+    }
+    
     @State private var tapCount: Int = 0
     private var dataManager = DataManager.shared
-    
-    private var icons: [String] = [
-        "car.top.radiowaves.rear",
-        "car.window.right.exclamationmark"
-    ]
     
     var body: some View {
         VStack {
             VStack{
-                Text("Information")
+                Text(category?.name ?? "Information")
                     .font(.body)
                     .fontWeight(.bold)
                     .foregroundStyle(.teal)
@@ -33,20 +30,22 @@ struct InformationAlertInfoView: View {
             .padding(.bottom, 16)
             
             HStack (spacing: 12) {
-                ForEach(icons, id: \.description) { icon in
-                    Button {
-                        tapCount += 1
-                        
-                        if tapCount >= 12 {
-                            dataManager.resetData()
-                            tapCount = 0
+                if let category = category {
+                    ForEach(category.sounds) { sound in
+                        Button {
+                            tapCount += 1
+                            
+                            if tapCount >= 12 {
+                                dataManager.resetData()
+                                tapCount = 0
+                            }
+                        } label: {
+                            Image(systemName: sound.icon)
+                                .font(.title2)
+                                .foregroundStyle(.teal)
                         }
-                    } label: {
-                        Image(systemName: icon)
-                            .font(.title2)
-                            .foregroundStyle(.teal)
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }

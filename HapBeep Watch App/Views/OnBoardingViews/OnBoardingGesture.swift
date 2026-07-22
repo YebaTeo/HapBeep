@@ -10,10 +10,11 @@ import SwiftUI
 struct OnBoardingGesture: View {
     var body: some View {
         VStack(spacing: 0) {
-            Image(systemName: "applewatch")
+            Image(systemName: "applewatch.side.right")
                 .foregroundStyle(.teal)
                 .font(.largeTitle)
                 .padding(10)
+                .symbolEffect(.rotate.clockwise.wholeSymbol, options: .repeat(.continuous))
             
             Text("Gesture")
                 .font(.body)

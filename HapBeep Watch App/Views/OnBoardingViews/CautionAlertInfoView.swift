@@ -1,24 +1,20 @@
-
-//
-//  Haptics1.swift
-//  HapBeep Watch App
-//
-//  Created by Michelle Intan Handa on 15/07/26.
-//
-
 import SwiftUI
+import SwiftData
 
 struct CautionAlertInfoView: View {
-    private var icons: [String] = [
-        "horn.blast",
-        "car.2.fill",
-        "car.rear.and.tire.marks"
-    ]
+    @Query(filter: #Predicate<Category> { category in
+        category.name == "Caution"
+    })
+    private var categories: [Category]
+
+    private var category: Category? {
+        categories.first
+    }
     
     var body: some View {
         VStack {
             VStack{
-                Text("Caution")
+                Text(category?.name ?? "Caution")
                     .font(.body)
                     .fontWeight(.bold)
                     .foregroundStyle(.orange)
@@ -31,10 +27,12 @@ struct CautionAlertInfoView: View {
             .padding(.bottom, 10)
             
             HStack (spacing: 12) {
-                ForEach(icons, id: \.description) { icon in
-                    Image(systemName: icon)
-                        .font(.title2)
-                        .foregroundStyle(.orange)
+                if let category = category {
+                    ForEach(category.sounds) { sound in
+                        Image(systemName: sound.icon)
+                            .font(.title2)
+                            .foregroundStyle(.orange)
+                    }
                 }
             }
         }

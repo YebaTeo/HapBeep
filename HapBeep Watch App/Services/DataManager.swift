@@ -72,19 +72,12 @@ class DataManager {
             ("knock",             "Knocking",           "car.window.right.exclamationmark",    "Check your windows",   informational),
             
             ("car_horn",          "Horn",           "horn.blast",    "Check your mirrors",    caution),
-            ("traffic_noise",     "Approaching Vehicle","car.2",    "Check your mirrors",     caution),
             ("vehicle_skidding",  "Tire Screeching",    "car.rear.and.tire.marks", "Check your mirrors", caution),
-//            ("bump", "Bump", "car.rear.road.lane.distance.3", "Pull over and inspect your vehicle",  caution),
-            
-<<<<<<< HEAD
-            ("emergency_vehicle", "Sirens",             "light.beacon.max.fill", "Check your mirrors and pull over to give way", critical),
-            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver.fill", "Pull over and inspect your vehicle", critical),
-            ("car_crash", "Car Bump", "car.rear.road.lane.distance.3", "Pull over and inspect your vehicle", caution)
-=======
+            ("car_crash", "Bump", "car.rear.road.lane.distance.3", "Pull over and inspect your vehicle", caution),
+            //("traffic_noise",     "Approaching Vehicle","car.2",    "Check your mirrors",     caution),
+
             ("emergency_vehicle", "Sirens",             "light.beacon.max", "Check your mirrors and pull over to give way", critical),
-            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver", "Pull over and inspect your vehicle", critical),
-            ("major_crash", "Crash", "car.side.rear.and.collision.and.car.side.front", "Pull over and inspect your vehicle", critical)
->>>>>>> 67f89423d1d74c7d0ef643069ea656f769efdc5c
+            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver", "Pull over and inspect your vehicle", critical)
         ]
         
         for data in soundData {
