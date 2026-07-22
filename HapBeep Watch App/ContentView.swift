@@ -198,7 +198,7 @@ struct ContentView: View {
             return
         }
         
-        let pattern = RoadPattern.pattern(for: detected)
+        let pattern = matchedSound?.category.hapticPattern ?? RoadPattern.pattern(for: detected)
         player.play(pattern)
         
         if let matched = matchedSound {
