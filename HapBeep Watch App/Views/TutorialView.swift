@@ -49,7 +49,7 @@ struct TutorialView: View {
             .ignoresSafeArea(edges: .bottom)
         }
         .toolbar(.hidden, for: .bottomBar)
-        .navigationTitle("About Us")
+        .navigationTitle("User Guide")
         .onChange(of: selectedTab) { _, tab in
             switch tab {
             case 1: player.play(.critical)
