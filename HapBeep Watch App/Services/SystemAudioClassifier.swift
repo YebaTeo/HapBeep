@@ -250,9 +250,9 @@ final class SystemAudioClassifier: NSObject {
             // Assign unique threshold levels to target custom conditions
             var dynamicThreshold: Double? = nil
             if votedLabel == "car_crash" {
-                dynamicThreshold = 0.80 // Car Crash set to 80%
+                dynamicThreshold = 0.85 // Car Crash set to 80%
             } else if votedLabel == "machine_faulty" {
-                dynamicThreshold = 0.75 // Machine Faulty set to 75%
+                dynamicThreshold = 0.90 // Machine Faulty set to 75%
             }
 
             if let requiredThreshold = dynamicThreshold, ensembleConfidence >= requiredThreshold {
