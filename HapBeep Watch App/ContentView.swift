@@ -234,3 +234,10 @@ enum SystemState {
             .modelContainer(DataManager.shared.container)
     }
 }
+
+#Preview ("Indonesian"){
+    NavigationStack {
+        ContentView()
+            .environment(\.locale, Locale(identifier: "ID"))
+    }
+}
