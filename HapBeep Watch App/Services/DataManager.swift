@@ -68,16 +68,16 @@ class DataManager {
         
         // (name: internal identifier, displayName: shown in UI, icon: asset name)
         let soundData: [(name: String, displayName: String, icon: String, cta: String, category: Category)] = [
-            ("reverse_beeps",     "Parking Sensor",     "car.top.radiowaves.rear", "Be aware of your surroundings", informational),
+            ("reverse_beeps",     "Dashboard Alert",     "powermeter", "Check the system dashboard", informational),
             ("knock",             "Knocking",           "car.window.right.exclamationmark",    "Check your windows",   informational),
             
-            ("car_horn",          "Car Horn",           "horn.blast",    "Check your mirrors",    caution),
-            ("traffic_noise",     "Approaching Vehicle","car.2.fill",    "Check your mirrors",     caution),
+            ("car_horn",          "Horn",           "horn.blast",    "Check your mirrors",    caution),
             ("vehicle_skidding",  "Tire Screeching",    "car.rear.and.tire.marks", "Check your mirrors", caution),
-            
-            ("emergency_vehicle", "Sirens",             "light.beacon.max.fill", "Check your mirrors and pull over to give way", critical),
-            ("car_crash",         "Car Crash Detected", "exclamationmark.triangle.fill", "Pull over and inspect your vehicle",  critical),
-            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver.fill", "Pull over and inspect your vehicle", critical)
+            ("car_crash", "Bump", "car.rear.and.collision.road.lane", "Pull over and inspect your vehicle", caution),
+            //("traffic_noise",     "Approaching Vehicle","car.2",    "Check your mirrors",     caution),
+
+            ("emergency_vehicle", "Sirens",             "light.beacon.max", "Check your mirrors and pull over to give way", critical),
+            ("machine_faulty",    "Faulty Machine",     "wrench.and.screwdriver", "Pull over and inspect your vehicle", critical)
         ]
         
         for data in soundData {

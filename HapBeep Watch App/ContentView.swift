@@ -124,15 +124,13 @@ struct ContentView: View {
             if systemState != .starting && activeSound == nil {
                 ToolbarItem(placement: .bottomBar) {
                     if systemState == .drivingOn {
-                        Button("End") {
+                        TextButton(text: "Stop") {
                             stopDrivingMode()
                         }
-                        .buttonStyle(.glass)
                     } else {
-                        Button("Start") {
+                        TextButton(text: "Start") {
                             startDrivingMode()
                         }
-                        .buttonStyle(.glass)
                     }
                 }
             }
@@ -200,7 +198,7 @@ struct ContentView: View {
             return
         }
         
-        let pattern = RoadPattern.pattern(for: detected)
+        let pattern = matchedSound?.category.hapticPattern ?? RoadPattern.pattern(for: detected)
         player.play(pattern)
         
         if let matched = matchedSound {
@@ -216,6 +214,7 @@ struct ContentView: View {
     }
     
     func startDrivingMode() { systemState = .starting }
+    
     func stopDrivingMode() {
         countdown = initialCountdown
         systemState = .drivingOff

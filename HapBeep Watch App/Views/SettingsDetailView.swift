@@ -25,7 +25,9 @@ struct SettingsDetailView: View {
                     } label: {
                         HStack {
                             Text(pattern.rawValue)
+                                .font(.caption)
                             Spacer()
+                            
                             if category.hapticPattern == pattern {
                                 Image(systemName: "checkmark")
                                     .foregroundColor(.accentColor)
@@ -38,7 +40,17 @@ struct SettingsDetailView: View {
             Section("Sounds") {
                 ForEach(category.sounds) { sound in
                     @Bindable var sound = sound
-                    Toggle(sound.displayName, isOn: $sound.isActive)
+                    Toggle(isOn: $sound.isActive) {
+                        HStack(spacing: 4) {
+                            Image(systemName: sound.icon)
+                                .font(.caption)
+                            
+                            VStack(alignment: .leading) {
+                                Text(sound.displayName)
+                                    .font(.caption)
+                            }
+                        }
+                    }
                     //Text(sound.displayName)
                 }
             }

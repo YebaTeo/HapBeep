@@ -1,17 +1,20 @@
 import SwiftUI
 import SwiftData
 
-struct CriticalAlertInfoView: View {    
-    private var icons: [String] = [
-        "light.beacon.max.fill",
-        "exclamationmark.triangle.fill",
-        "wrench.and.screwdriver.fill"
-    ]
+struct CriticalAlertInfoView: View {
+    @Query(filter: #Predicate<Category> { category in
+        category.name == "Critical"
+    })
+    private var criticalCategories: [Category]
+
+    private var criticalCategory: Category? {
+        criticalCategories.first
+    }
     
     var body: some View {
         VStack{
             VStack{
-                Text("Critical")
+                Text(criticalCategory?.name ?? "Critical")
                     .font(.body)
                     .fontWeight(.bold)
                     .foregroundStyle(.red)
@@ -24,10 +27,12 @@ struct CriticalAlertInfoView: View {
             .padding(.bottom, 10)
             
             HStack (spacing: 12) {
-                ForEach(icons, id: \.description) { icon in
-                    Image(systemName: icon)
-                        .font(.title2)
-                        .foregroundStyle(.red)
+                if let category = criticalCategory {
+                    ForEach(category.sounds) { sound in
+                        Image(systemName: sound.icon)
+                            .font(.title2)
+                            .foregroundStyle(.red)
+                    }
                 }
             }
         }
