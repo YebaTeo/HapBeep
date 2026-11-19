@@ -56,30 +56,56 @@ final class SystemAudioClassifier: NSObject {
         }
     }
 
+    enum AudioClassifierError: LocalizedError {
+        case microphonePermissionDenied
+        case microphoneInputUnavailable
+
+        var errorDescription: String? {
+            switch self {
+            case .microphonePermissionDenied:
+                return "Microphone access is not authorized."
+            case .microphoneInputUnavailable:
+                return "The microphone input format is unavailable."
+            }
+        }
+    }
+
     func start() throws {
         guard !audioEngine.isRunning else { return }
+        guard AVAudioApplication.shared.recordPermission == .granted else {
+            throw AudioClassifierError.microphonePermissionDenied
+        }
+
+        let audioSession = AVAudioSession.sharedInstance()
+        try audioSession.setCategory(.record, mode: .measurement)
+        try audioSession.setActive(true)
 
         let inputNode = audioEngine.inputNode
-        let format = inputNode.outputFormat(forBus: 0)
+        let format = inputNode.inputFormat(forBus: 0)
 
-        analyzer = SNAudioStreamAnalyzer(format: format)
+        guard format.sampleRate > 0, format.channelCount > 0 else {
+            try? audioSession.setActive(false)
+            throw AudioClassifierError.microphoneInputUnavailable
+        }
 
-        guard let analyzer else { return }
+        let streamAnalyzer = SNAudioStreamAnalyzer(format: format)
+        let request = try SNClassifySoundRequest(classifierIdentifier: .version1)
+        try streamAnalyzer.add(request, withObserver: self)
 
-        systemRequest = try SNClassifySoundRequest(classifierIdentifier: .version1)
-        try analyzer.add(systemRequest!, withObserver: self)
+        analyzer = streamAnalyzer
+        systemRequest = request
 
         inputNode.installTap(
             onBus: 0,
             bufferSize: 2048,
             format: format
         ) { [weak self] buffer, time in
-            guard let self = self else { return }
-            
+            guard let self else { return }
+
             self.analysisQueue.async {
                 let extractedFeatures = self.extractAudioFeatures(from: buffer)
                 self.latestFeatures = extractedFeatures
-                
+
                 self.analyzer?.analyze(
                     buffer,
                     atAudioFramePosition: time.sampleTime
@@ -87,10 +113,17 @@ final class SystemAudioClassifier: NSObject {
             }
         }
 
-        audioEngine.prepare()
-        try audioEngine.start()
-
-        print("Audio Engine Started")
+        do {
+            audioEngine.prepare()
+            try audioEngine.start()
+            print("Audio Engine Started")
+        } catch {
+            inputNode.removeTap(onBus: 0)
+            analyzer = nil
+            systemRequest = nil
+            try? audioSession.setActive(false)
+            throw error
+        }
     }
 
     func stop() {
@@ -98,6 +131,12 @@ final class SystemAudioClassifier: NSObject {
 
         audioEngine.stop()
         audioEngine.inputNode.removeTap(onBus: 0)
+
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+        } catch {
+            print("Failed to deactivate audio session: \(error.localizedDescription)")
+        }
 
         analyzer = nil
         systemRequest = nil

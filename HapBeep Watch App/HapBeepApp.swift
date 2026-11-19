@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import AVFoundation
 
 @main
 struct HapBeep_Watch_AppApp: App {
@@ -26,7 +27,12 @@ struct HapBeep_Watch_AppApp: App {
                 }
             }
             .modelContainer(DataManager.shared.container)
-            .onAppear {
+            .task {
+                if AVAudioApplication.shared.recordPermission == .undetermined {
+                    let granted = await AVAudioApplication.requestRecordPermission()
+                    print("[PERMISSION]: Microphone permission \(granted ? "granted" : "denied")")
+                }
+
                 notificationManager.requestAuthorization()
             }
         }

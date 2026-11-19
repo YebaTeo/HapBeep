@@ -149,7 +149,12 @@ struct ContentView: View {
             if state == .starting {
                 lockEngine.startLock()
             } else if state == .drivingOn {
-                try? classifier.start()
+                do {
+                    try classifier.start()
+                } catch {
+                    print("Failed to start sound classification: \(error.localizedDescription)")
+                    systemState = .drivingOff
+                }
             } else if state == .drivingOff {
                 classifier.stop()
                 classifier.detectedSound = nil
